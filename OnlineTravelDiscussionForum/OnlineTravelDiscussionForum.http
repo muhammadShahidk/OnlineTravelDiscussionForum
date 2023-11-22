@@ -1,0 +1,6 @@
+@OnlineTravelDiscussionForum_HostAddress = http://localhost:5079
+
+GET {{OnlineTravelDiscussionForum_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
