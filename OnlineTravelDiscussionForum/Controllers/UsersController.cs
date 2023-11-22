@@ -13,9 +13,9 @@ namespace OnlineTravelDiscussionForum.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly ForumDataContext _context;
+        private readonly ForumDbContext _context;
 
-        public UsersController(ForumDataContext context)
+        public UsersController(ForumDbContext context)
         {
             _context = context;
         }

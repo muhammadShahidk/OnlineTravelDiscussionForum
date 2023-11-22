@@ -2,9 +2,9 @@
 
 namespace OnlineTravelDiscussionForum.Modals
 {
-    public class ForumDataContext:DbContext
+    public class ForumDbContext:DbContext
     {
-        public ForumDataContext(DbContextOptions<ForumDataContext> options) : base(options) { }
+        public ForumDbContext(DbContextOptions<ForumDbContext> options) : base(options) { }
         
        public DbSet<User> users { get; set; }
     }

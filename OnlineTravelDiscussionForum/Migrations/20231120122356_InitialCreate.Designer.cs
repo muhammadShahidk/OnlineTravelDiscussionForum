@@ -10,7 +10,7 @@ using OnlineTravelDiscussionForum.Modals;
 
 namespace OnlineTravelDiscussionForum.Migrations
 {
-    [DbContext(typeof(ForumDataContext))]
+    [DbContext(typeof(ForumDbContext))]
     [Migration("20231120122356_InitialCreate")]
     partial class InitialCreate
     {

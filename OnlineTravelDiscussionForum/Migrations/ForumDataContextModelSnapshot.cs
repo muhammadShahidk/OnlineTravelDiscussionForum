@@ -9,7 +9,7 @@ using OnlineTravelDiscussionForum.Modals;
 
 namespace OnlineTravelDiscussionForum.Migrations
 {
-    [DbContext(typeof(ForumDataContext))]
+    [DbContext(typeof(ForumDbContext))]
     partial class ForumDataContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
