@@ -8,6 +8,9 @@ namespace OnlineTravelDiscussionForum.Data
     {
         public ForumDbContext(DbContextOptions<ForumDbContext> options) : base(options) { }
 
-        public DbSet<User> users { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Post> Posts { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<ApprovalRequest> ApprovalRequests { get; set; }
     }
 }
