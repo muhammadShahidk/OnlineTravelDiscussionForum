@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using OnlineTravelDiscussionForum.Modals;
 
-namespace OnlineTravelDiscussionForum.Modals
+namespace OnlineTravelDiscussionForum.Data
 {
     public class ForumDbContext : IdentityDbContext<ApplicationUser>
     {
