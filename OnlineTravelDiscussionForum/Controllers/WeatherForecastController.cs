@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OnlineTravelDiscussionForum.OtherObjects;
 
 namespace OnlineTravelDiscussionForum.Controllers
 {
@@ -7,27 +9,43 @@ namespace OnlineTravelDiscussionForum.Controllers
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+       {
+        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
-        private readonly ILogger<WeatherForecastController> _logger;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        [HttpGet]
+        [Route("Get")]
+        public IActionResult Get()
         {
-            _logger = logger;
+            return Ok(Summaries);
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        [HttpGet]
+        [Route("GetUserRole")]
+        [Authorize(Roles = StaticRoles.USER)]
+        public IActionResult GetUserRole()
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+            return Ok(Summaries);
         }
+
+        [HttpGet]
+        [Route("GetAdminRole")]
+        [Authorize(Roles = StaticRoles.ADMIN)]
+        public IActionResult GetAdminRole()
+        {
+            return Ok(Summaries);
+        }
+
+        [HttpGet]
+        [Route("GetOwnerRole")]
+        [Authorize(Roles = StaticRoles.MODERATOR)]
+        public IActionResult GetOwnerRole()
+        {
+            return Ok(Summaries);
+        }
+
+
     }
 }
+
