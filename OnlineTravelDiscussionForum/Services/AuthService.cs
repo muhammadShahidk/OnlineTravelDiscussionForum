@@ -100,7 +100,7 @@ namespace OnlineTravelDiscussionForum.Services
                     Message = "Invalid User name!!!!!!!!"
                 };
 
-            await _userManager.AddToRoleAsync(user, StaticRoles.OWNER);
+            await _userManager.AddToRoleAsync(user, StaticRoles.MODERATOR);
 
             return new AuthServiceResponseDto()
             {
@@ -158,7 +158,7 @@ namespace OnlineTravelDiscussionForum.Services
 
         public async Task<AuthServiceResponseDto> SeedRolesAsync()
         {
-            bool isOwnerRoleExists = await _roleManager.RoleExistsAsync(StaticRoles.OWNER);
+            bool isOwnerRoleExists = await _roleManager.RoleExistsAsync(StaticRoles.MODERATOR);
             bool isAdminRoleExists = await _roleManager.RoleExistsAsync(StaticRoles.ADMIN);
             bool isUserRoleExists = await _roleManager.RoleExistsAsync(StaticRoles.USER);
 
@@ -171,7 +171,7 @@ namespace OnlineTravelDiscussionForum.Services
 
             await _roleManager.CreateAsync(new IdentityRole(StaticRoles.USER));
             await _roleManager.CreateAsync(new IdentityRole(StaticRoles.ADMIN));
-            await _roleManager.CreateAsync(new IdentityRole(StaticRoles.OWNER));
+            await _roleManager.CreateAsync(new IdentityRole(StaticRoles.MODERATOR));
 
             return new AuthServiceResponseDto()
             {

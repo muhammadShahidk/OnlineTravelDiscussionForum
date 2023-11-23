@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using OnlineTravelDiscussionForum.Interfaces;
 using OnlineTravelDiscussionForum.Modals;
+using OnlineTravelDiscussionForum.Services;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,7 +28,7 @@ builder.Services.AddDbContext<ForumDbContext>(options =>
 
 // Add Identity
 builder.Services
-    .AddIdentity<IdentityUser, IdentityRole>()
+    .AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ForumDbContext>()
     .AddDefaultTokenProviders();
 
@@ -65,12 +67,14 @@ builder.Services
         };
     });
 
+// Inject app Dependencies (Dependency Injection)
+
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 
 
 
-
-
+// pipeline
 var app = builder.Build();
 
 
