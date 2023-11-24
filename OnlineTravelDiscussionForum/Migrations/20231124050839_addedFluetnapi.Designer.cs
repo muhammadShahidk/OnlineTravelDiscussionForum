@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineTravelDiscussionForum.Data;
 
@@ -11,9 +12,11 @@ using OnlineTravelDiscussionForum.Data;
 namespace OnlineTravelDiscussionForum.Migrations
 {
     [DbContext(typeof(ForumDbContext))]
-    partial class ForumDataContextModelSnapshot : ModelSnapshot
+    [Migration("20231124050839_addedFluetnapi")]
+    partial class addedFluetnapi
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -249,7 +252,7 @@ namespace OnlineTravelDiscussionForum.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("ApprovalRequests", (string)null);
+                    b.ToTable("ApprovalRequests");
                 });
 
             modelBuilder.Entity("OnlineTravelDiscussionForum.Modals.Comment", b =>
@@ -264,10 +267,7 @@ namespace OnlineTravelDiscussionForum.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("DateCreateAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DateUpdateAt")
+                    b.Property<DateTime>("DateCommented")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("PostID")
@@ -282,7 +282,7 @@ namespace OnlineTravelDiscussionForum.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("OnlineTravelDiscussionForum.Modals.Post", b =>
@@ -312,7 +312,7 @@ namespace OnlineTravelDiscussionForum.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("OnlineTravelDiscussionForum.Modals.User", b =>
@@ -339,7 +339,7 @@ namespace OnlineTravelDiscussionForum.Migrations
 
                     b.HasKey("UserID");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

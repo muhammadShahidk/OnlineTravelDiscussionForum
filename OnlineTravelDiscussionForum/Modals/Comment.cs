@@ -12,8 +12,8 @@ namespace OnlineTravelDiscussionForum.Modals
         [Required]
         public string Content { get; set; }
 
-        [Required]
-        public DateTime DateCommented { get; set; }
+        public DateTime DateCreateAt { get; set; }
+        public DateTime? DateUpdateAt { get; set; }
 
         public int UserID { get; set; }
 
