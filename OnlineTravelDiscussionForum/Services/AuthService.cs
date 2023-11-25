@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using OnlineTravelDiscussionForum.Data;
 using OnlineTravelDiscussionForum.Dtos;
 using OnlineTravelDiscussionForum.Interfaces;
 using OnlineTravelDiscussionForum.Modals;
@@ -15,14 +18,53 @@ namespace OnlineTravelDiscussionForum.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
+        private readonly ForumDbContext _forumDbContext;
 
-        public AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+        public AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, ForumDbContext forumDbContext)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
+            _forumDbContext = forumDbContext;
         }
 
+        public async Task<List<UserRoleDto>> GetUserRolsAsync()
+        {
+            List<ApplicationUser> users;
+            users = await _userManager.Users.ToListAsync();
+           
+            //var users = _forumDbContext ;
+
+
+            List<UserRoleDto> usersWithRolles = new();
+            if (users != null)
+            {
+                foreach (var user in users)
+                {
+
+                    var rools =(await _userManager.GetRolesAsync(user)).ToList();
+
+
+                    usersWithRolles.Add(
+                         new UserRoleDto
+                         {
+                             name = user.FirstName,
+                             userName = user.UserName,
+                             password = user.PasswordHash,
+                             Rools = rools
+                         }
+
+                        ); ;
+
+                }
+
+
+            }
+
+            return usersWithRolles;
+
+
+        }
 
         public async Task<AuthServiceResponseDto> LoginAsync(LoginDto loginDto)
         {
@@ -105,7 +147,7 @@ namespace OnlineTravelDiscussionForum.Services
             return new AuthServiceResponseDto()
             {
                 IsSucceed = true,
-                Message = "User is now an OWNER"
+                Message = $"User is now an {StaticRoles.MODERATOR}"
             };
         }
 

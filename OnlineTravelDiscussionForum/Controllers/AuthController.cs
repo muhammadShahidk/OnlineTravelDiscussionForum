@@ -71,12 +71,24 @@ namespace OnlineTravelDiscussionForum.Controllers
 
         // Route -> make user -> owner
         [HttpPost]
-        [Route("make-owner")]
+        [Route("make-moderator")]
         public async Task<IActionResult> MakeOwner([FromBody] UpdatePermissionDto updatePermissionDto)
         {
             var operationResult = await _authService.MakeOwnerAsync(updatePermissionDto);
 
             if (operationResult.IsSucceed)
+                return Ok(operationResult);
+
+            return BadRequest(operationResult);
+        }
+
+        [HttpPost]
+        [Route("get-user-rols")]
+        public async Task<IActionResult> GetUserRols()
+        {
+            var operationResult = await _authService.GetUserRolsAsync();
+
+            if (operationResult != null)
                 return Ok(operationResult);
 
             return BadRequest(operationResult);

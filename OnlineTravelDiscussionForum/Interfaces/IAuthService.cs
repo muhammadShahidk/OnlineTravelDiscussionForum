@@ -9,5 +9,6 @@ namespace OnlineTravelDiscussionForum.Interfaces
         Task<AuthServiceResponseDto> LoginAsync(LoginDto loginDto);
         Task<AuthServiceResponseDto> MakeAdminAsync(UpdatePermissionDto updatePermissionDto);
         Task<AuthServiceResponseDto> MakeOwnerAsync(UpdatePermissionDto updatePermissionDto);
+        Task<List<UserRoleDto>> GetUserRolsAsync();
     }
 }

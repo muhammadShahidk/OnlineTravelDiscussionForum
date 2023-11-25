@@ -38,7 +38,7 @@ namespace OnlineTravelDiscussionForum.Controllers
         }
 
         [HttpGet]
-        [Route("GetOwnerRole")]
+        [Route("GetModeratorRole")]
         [Authorize(Roles = StaticRoles.MODERATOR)]
         public IActionResult GetOwnerRole()
         {
