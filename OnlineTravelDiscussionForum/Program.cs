@@ -13,10 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 //auth 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
 
 
 builder.Services.AddDbContext<ForumDbContext>(options =>
@@ -25,6 +22,7 @@ builder.Services.AddDbContext<ForumDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DiscussionFormDb"));
 });
 
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 
 // Add Identity
@@ -43,7 +41,10 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireUppercase = false;
     options.Password.RequireNonAlphanumeric = false;
     options.SignIn.RequireConfirmedEmail = false;
+    //options.Tokens.
 });
+
+
 
 
 // Add Authentication and JwtBearer
@@ -68,9 +69,24 @@ builder.Services
         };
     });
 
+builder.Services.AddControllers();
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder
+            .WithOrigins("http://localhost:4200")
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 // Inject app Dependencies (Dependency Injection)
 
-builder.Services.AddScoped<IAuthService, AuthService>();
 
 
 
@@ -90,9 +106,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
