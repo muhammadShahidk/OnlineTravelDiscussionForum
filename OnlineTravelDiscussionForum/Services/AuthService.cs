@@ -32,7 +32,7 @@ namespace OnlineTravelDiscussionForum.Services
         {
             List<ApplicationUser> users;
             users = await _userManager.Users.ToListAsync();
-           
+     
             //var users = _forumDbContext ;
 
 
@@ -43,7 +43,7 @@ namespace OnlineTravelDiscussionForum.Services
                 {
 
                     var rools =(await _userManager.GetRolesAsync(user)).ToList();
-
+                    
 
                     usersWithRolles.Add(
                          new UserRoleDto

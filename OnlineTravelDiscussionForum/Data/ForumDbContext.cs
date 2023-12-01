@@ -17,17 +17,17 @@ namespace OnlineTravelDiscussionForum.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<User>()
+            modelBuilder.Entity<ApplicationUser>()
                 .HasMany(p => p.Posts)
-                .WithOne(u => u.User)
+                .WithOne(u => u.user)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<User>()
+            modelBuilder.Entity<ApplicationUser>()
                .HasMany(c => c.Comments)
                .WithOne(p => p.User)
                .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<User>()
+            modelBuilder.Entity<ApplicationUser>()
              .HasMany(c => c.ApprovalRequests)
              .WithOne(p => p.User)
              .OnDelete(DeleteBehavior.Cascade);

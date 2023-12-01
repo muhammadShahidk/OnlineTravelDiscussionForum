@@ -1,12 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using OnlineTravelDiscussionForum.Data;
+using OnlineTravelDiscussionForum.Dtos;
 using OnlineTravelDiscussionForum.Modals;
+using OnlineTravelDiscussionForum.OtherObjects;
 
 namespace OnlineTravelDiscussionForum.Controllers
 {
@@ -15,22 +22,31 @@ namespace OnlineTravelDiscussionForum.Controllers
     public class PostsController : ControllerBase
     {
         private readonly ForumDbContext _context;
+        private readonly IMapper _mapper;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public PostsController(ForumDbContext context)
+        public PostsController(ForumDbContext context, IMapper mapper, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _mapper = mapper;
+            _userManager = userManager;
         }
 
         // GET: api/Posts
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Post>>> GetPosts()
+        public async Task<ActionResult<IEnumerable<PostResponseDto>>> GetPosts()
         {
-            return await _context.Posts.ToListAsync();
+
+            var posts = await _context.Posts.ToListAsync();
+            //PostResponseDto[] postsResponse = posts.Select(x=>new PostResponseDto {Id = x.PostID, Title = x.Title , Content = x.Content }).ToArray();
+ 
+            return _mapper.Map<List<PostResponseDto>>(posts); ;
+            
         }
 
         // GET: api/Posts/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Post>> GetPost(int id)
+        public async Task<ActionResult<PostResponseDto>> GetPost(int id)
         {
             var post = await _context.Posts.FindAsync(id);
 
@@ -39,7 +55,7 @@ namespace OnlineTravelDiscussionForum.Controllers
                 return NotFound();
             }
 
-            return post;
+            return _mapper.Map<PostResponseDto>(post); ;
         }
 
         // PUT: api/Posts/5
@@ -76,12 +92,27 @@ namespace OnlineTravelDiscussionForum.Controllers
         // POST: api/Posts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Post>> PostPost(Post post)
+        [Route("newPost")]
+        [Authorize(Roles = StaticRoles.USER)]
+        public async Task<ActionResult<Post>> PostPost(PostRequestDto post)
         {
-            _context.Posts.Add(post);
+            
+            if (post == null)
+            {
+                return BadRequest("no data to add");
+            }
+
+            var userId =  User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId != null)
+            {
+                //var currentUser = ;
+                var newPost = _context.Posts.Add(new Post { Title=post.Title, Content = post.Content, UserID = userId });
+
+            }
+
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPost", new { id = post.PostID }, post);
+            return CreatedAtAction($"Post",post);
         }
 
         // DELETE: api/Posts/5
@@ -98,6 +129,24 @@ namespace OnlineTravelDiscussionForum.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+        [HttpPost("test{id}")]
+        public async Task<IActionResult> test(int id)
+        {
+            return(Ok("id:"+id));
+        }
+
+        [HttpPut("multiple")]
+        public IActionResult GetMultipleData( [FromHeader] string header1, [FromBody] dynamic bodyData , [FromQuery] string? param1 = null)
+        {
+            var result = new
+            {
+                Param1 = param1,
+                Header1 = header1,
+                BodyData = bodyData
+            };
+
+            return Ok(result);
         }
 
         private bool PostExists(int id)

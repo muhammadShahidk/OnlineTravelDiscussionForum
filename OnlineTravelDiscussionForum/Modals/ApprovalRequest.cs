@@ -9,10 +9,10 @@ namespace OnlineTravelDiscussionForum.Modals
             [Key]
             public int RequestId { get; set; }
 
-            public int UserID { get; set; }
+            public string UserID { get; set; }
 
             [ForeignKey("UserID")]
-            public User User { get; set; }
+            public ApplicationUser User { get; set; }
 
             [Required]
             public DateTime DateCreated { get; set; } = DateTime.Now;

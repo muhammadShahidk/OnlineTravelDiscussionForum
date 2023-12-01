@@ -15,9 +15,9 @@ namespace OnlineTravelDiscussionForum.Modals
         public DateTime DateCreateAt { get; set; }
         public DateTime? DateUpdateAt { get; set; }
 
-        public int UserID { get; set; }
+        public string UserID { get; set; }
 
-        public User User { get; set; }
+        public ApplicationUser User { get; set; }
         
         public int PostID { get; set; }
 

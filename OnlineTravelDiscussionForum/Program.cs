@@ -2,8 +2,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using OnlineTravelDiscussionForum.Data;
+using OnlineTravelDiscussionForum.Dtos;
 using OnlineTravelDiscussionForum.Interfaces;
 using OnlineTravelDiscussionForum.Modals;
 using OnlineTravelDiscussionForum.Services;
@@ -14,8 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 //auth 
 
-
-
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddDbContext<ForumDbContext>(options =>
 {
 
