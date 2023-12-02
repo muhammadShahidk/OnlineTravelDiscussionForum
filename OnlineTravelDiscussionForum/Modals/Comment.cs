@@ -12,7 +12,7 @@ namespace OnlineTravelDiscussionForum.Modals
         [Required]
         public string Content { get; set; }
 
-        public DateTime DateCreateAt { get; set; }
+        public DateTime DateCreateAt { get; set; } = DateTime.Now;
         public DateTime? DateUpdateAt { get; set; }
 
         public string UserID { get; set; }

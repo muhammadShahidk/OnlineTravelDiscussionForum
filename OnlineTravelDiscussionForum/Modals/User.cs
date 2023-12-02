@@ -20,9 +20,9 @@ namespace OnlineTravelDiscussionForum.Modals
         public string Email { get; set; }
 
 
-        public ICollection<Post> Posts { get; set; } = new List<Post>();
-        public ICollection<Comment> Comments { get; set; } = new List<Comment>();
-        public ICollection<ApprovalRequest> ApprovalRequests { get; set; } = new List<ApprovalRequest>();
+        //public ICollection<Post> Posts { get; set; } = new List<Post>();
+        //public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+        //public ICollection<ApprovalRequest> ApprovalRequests { get; set; } = new List<ApprovalRequest>();
 
         // You can add additional properties as needed
 
