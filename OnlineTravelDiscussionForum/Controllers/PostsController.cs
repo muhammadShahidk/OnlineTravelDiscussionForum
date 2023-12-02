@@ -32,19 +32,24 @@ namespace OnlineTravelDiscussionForum.Controllers
             _userManager = userManager;
         }
 
-        // GET: api/Posts
+        // GET: api/Posts  get posts
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PostResponseDto>>> GetPosts()
         {
 
-            var posts = await _context.Posts.ToListAsync();
+            var userid = CurrentUserID();
+            if (userid == null)
+            {
+                return BadRequest("first login to see posts");
+            }
+            var posts = await _context.Posts.Where(x => x.UserID == userid).ToListAsync();
             //PostResponseDto[] postsResponse = posts.Select(x=>new PostResponseDto {Id = x.PostID, Title = x.Title , Content = x.Content }).ToArray();
  
             return _mapper.Map<List<PostResponseDto>>(posts); ;
             
         }
 
-        // GET: api/Posts/5
+        // GET: api/Posts/5 get post by id
         [HttpGet("{id}")]
         public async Task<ActionResult<PostResponseDto>> GetPost(int id)
         {
@@ -58,14 +63,21 @@ namespace OnlineTravelDiscussionForum.Controllers
             return _mapper.Map<PostResponseDto>(post); ;
         }
 
-        // PUT: api/Posts/5
+        // PUT: api/Posts/5 update by id 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPost(int id, Post post)
         {
-            if (id != post.PostID)
+            if (post == null)
             {
-                return BadRequest();
+                return BadRequest("add new content ");
+            }
+
+            var CurrentPost = await _context.Posts.FirstOrDefaultAsync(x => x.PostID == id);
+
+            if (CurrentPost == null)
+            {
+                return NotFound("no post exist");
             }
 
             _context.Entry(post).State = EntityState.Modified;
