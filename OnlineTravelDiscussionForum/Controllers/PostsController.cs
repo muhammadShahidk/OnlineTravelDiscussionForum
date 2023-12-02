@@ -121,16 +121,21 @@ namespace OnlineTravelDiscussionForum.Controllers
             if (userId != null)
             {
                 //var currentUser = ;
-                var newPost = _context.Posts.Add(new Post { Title=post.Title, Content = post.Content, UserID = userId });
+                var newPost = _context.Posts.Add(new Post { Title = post.Title, Content = post.Content, UserID = userId });
 
             }
 
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction($"Post",post);
+            return Ok("post added: -> " + post.Title);
         }
 
-        // DELETE: api/Posts/5
+        private string? CurrentUserID()
+        {
+            return User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        }
+
+        // DELETE: api/Posts/5 delete by id
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePost(int id)
         {
@@ -143,16 +148,16 @@ namespace OnlineTravelDiscussionForum.Controllers
             _context.Posts.Remove(post);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok($"post {post.Title} :-> Deleted");
         }
         [HttpPost("test{id}")]
         public async Task<IActionResult> test(int id)
         {
-            return(Ok("id:"+id));
+            return (Ok("id:" + id));
         }
 
         [HttpPut("multiple")]
-        public IActionResult GetMultipleData( [FromHeader] string header1, [FromBody] dynamic bodyData , [FromQuery] string? param1 = null)
+        public IActionResult GetMultipleData([FromHeader] string header1, [FromBody] dynamic bodyData, [FromQuery] string? param1 = null)
         {
             var result = new
             {
