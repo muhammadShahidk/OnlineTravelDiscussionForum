@@ -66,7 +66,7 @@ namespace OnlineTravelDiscussionForum.Controllers
         // PUT: api/Posts/5 update by id 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPost(int id, Post post)
+        public async Task<IActionResult> PutPost(int id, PostRequestDto post)
         {
             if (post == null)
             {
@@ -80,7 +80,10 @@ namespace OnlineTravelDiscussionForum.Controllers
                 return NotFound("no post exist");
             }
 
-            _context.Entry(post).State = EntityState.Modified;
+            CurrentPost.Title = post.Title ?? CurrentPost.Title;
+            CurrentPost.Content = post.Content ?? CurrentPost.Content;
+
+            _context.Entry(CurrentPost).State = EntityState.Modified;
 
             try
             {
@@ -98,7 +101,7 @@ namespace OnlineTravelDiscussionForum.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok("post updated");
         }
 
         // POST: api/Posts
