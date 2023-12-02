@@ -173,5 +173,37 @@ namespace OnlineTravelDiscussionForum.Controllers
         {
             return _context.Posts.Any(e => e.PostID == id);
         }
+
+        [Authorize(Roles = StaticRoles.USER)]
+        [HttpPost("{id}/comments")]
+        public async Task<IActionResult> addComments(int id, [FromBody] CommentRequestDto comment)
+        {
+            if (id == null)
+            {
+                return BadRequest("please provide post id");
+            }
+            var userid = CurrentUserID();
+            if (userid == null)
+            {
+                return BadRequest("please login to create comments");
+            }
+
+            var post = _context.Posts.Single(e => e.PostID == id);
+            if (post == null)
+            {
+                return BadRequest($"Post {id} was not found");
+            }
+
+            var NewComment = new Comment { UserID = userid, Content = comment.Content, PostID = post.PostID };
+
+
+
+            post.Comments.Add(NewComment);
+            _context.SaveChanges();
+
+            return (Ok("comments are addedz"));
+        }
+
+
     }
 }
