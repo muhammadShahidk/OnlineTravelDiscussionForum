@@ -205,5 +205,48 @@ namespace OnlineTravelDiscussionForum.Controllers
         }
 
 
+
+        [Authorize(Roles = StaticRoles.USER)]
+        [HttpGet("{id}/comments")]
+        public async Task<IActionResult> GetComments(int id)
+        {
+            try
+            {
+                if (id <= 0)
+                {
+                    return BadRequest("Please provide a valid post ID");
+                }
+
+                var userId = CurrentUserID();
+                if (userId == null)
+                {
+                    return BadRequest("Please log in to view comments");
+                }
+
+                var postWithComments = await _context.Posts
+                    .Include(p => p.Comments)
+                    .FirstOrDefaultAsync(p => p.PostID == id);
+
+                if (postWithComments == null)
+                {
+                    return NotFound($"Post {id} was not found");
+                }
+
+                var commentsForPost = postWithComments.Comments.ToList();
+                var commentResponseDtos = _mapper.Map<List<CommentResposnceDto>>(commentsForPost);
+
+                return Ok(commentResponseDtos);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for debugging purposes
+                // logger.LogError(ex, "An error occurred while getting comments.");
+
+                // Return a generic error message to the client
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
+        }
+
+       
     }
 }
