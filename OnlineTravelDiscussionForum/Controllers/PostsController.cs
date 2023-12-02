@@ -8,7 +8,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Hosting;
 using OnlineTravelDiscussionForum.Data;
 using OnlineTravelDiscussionForum.Dtos;
@@ -44,9 +46,9 @@ namespace OnlineTravelDiscussionForum.Controllers
             }
             var posts = await _context.Posts.Where(x => x.UserID == userid).ToListAsync();
             //PostResponseDto[] postsResponse = posts.Select(x=>new PostResponseDto {Id = x.PostID, Title = x.Title , Content = x.Content }).ToArray();
- 
+
             return _mapper.Map<List<PostResponseDto>>(posts); ;
-            
+
         }
 
         // GET: api/Posts/5 get post by id
@@ -107,11 +109,10 @@ namespace OnlineTravelDiscussionForum.Controllers
         // POST: api/Posts new post
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [Route("newPost")]
         [Authorize(Roles = StaticRoles.USER)]
         public async Task<ActionResult<Post>> PostPost(PostRequestDto post)
         {
-            
+
             if (post == null)
             {
                 return BadRequest("no data to add");
