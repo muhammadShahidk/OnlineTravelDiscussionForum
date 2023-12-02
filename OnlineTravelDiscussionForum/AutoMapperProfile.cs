@@ -10,7 +10,10 @@ namespace OnlineTravelDiscussionForum
         {
             CreateMap<Post, PostResponseDto>().ReverseMap();
             CreateMap<Post, PostRequestDto>().ReverseMap();
-          
+
+            CreateMap<Comment, CommentResposnceDto>().ReverseMap();
+            CreateMap<Comment, CommentRequestDto>().ReverseMap();
+
         }
     }
 }
