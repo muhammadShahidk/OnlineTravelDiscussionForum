@@ -104,7 +104,7 @@ namespace OnlineTravelDiscussionForum.Controllers
             return Ok("post updated");
         }
 
-        // POST: api/Posts
+        // POST: api/Posts new post
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [Route("newPost")]
@@ -117,7 +117,7 @@ namespace OnlineTravelDiscussionForum.Controllers
                 return BadRequest("no data to add");
             }
 
-            var userId =  User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = CurrentUserID();
             if (userId != null)
             {
                 //var currentUser = ;
