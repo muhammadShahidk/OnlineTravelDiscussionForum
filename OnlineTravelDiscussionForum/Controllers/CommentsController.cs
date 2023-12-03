@@ -70,6 +70,7 @@ namespace OnlineTravelDiscussionForum.Controllers
 
        
         // DELETE: api/Comments/5
+        [Authorize(Roles = StaticRoles.USER)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteComment(int id)
         {
@@ -80,16 +81,31 @@ namespace OnlineTravelDiscussionForum.Controllers
                     return BadRequest("Please provide a valid comment ID");
                 }
 
-               
+                var userId = await _userService.GetCurrentUserId();
 
                 var commentToDelete = await _context.Comments
-                    .FirstOrDefaultAsync(c => c.CommentId == id);
+                    .FirstOrDefaultAsync(c => c.CommentId == id );
+
 
                 if (commentToDelete == null)
                 {
                     return NotFound($"Comment {id} was not found");
                 }
+               
+                //admin can delete any comment
+                var userRools = _userService.GetUserRools();
+                if(userRools.Contains(StaticRoles.ADMIN) || userRools.Contains(StaticRoles.MODERATOR))
+                {
+                    _context.Comments.Remove(commentToDelete);
+                    await _context.SaveChangesAsync();
+                    return Ok("Comment deleted successfully");
+                }
 
+                // Check if the user is the owner of the comment
+                if (commentToDelete.UserID != userId) {
+                
+                    return BadRequest("you are not allowed to delete this comment");
+                }
                 // Remove the comment from the database
                 _context.Comments.Remove(commentToDelete);
 
