@@ -12,8 +12,10 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Hosting;
+using Microsoft.VisualBasic;
 using OnlineTravelDiscussionForum.Data;
 using OnlineTravelDiscussionForum.Dtos;
+using OnlineTravelDiscussionForum.Interfaces;
 using OnlineTravelDiscussionForum.Modals;
 using OnlineTravelDiscussionForum.OtherObjects;
 
@@ -25,13 +27,15 @@ namespace OnlineTravelDiscussionForum.Controllers
     {
         private readonly ForumDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IUserService _userService;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public PostsController(ForumDbContext context, IMapper mapper, UserManager<ApplicationUser> userManager)
+        public PostsController(ForumDbContext context, IMapper mapper, UserManager<ApplicationUser> userManager, IUserService userService)
         {
             _context = context;
             _mapper = mapper;
             _userManager = userManager;
+            _userService = userService;
         }
 
         // GET: api/Posts  get posts
