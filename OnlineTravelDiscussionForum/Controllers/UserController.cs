@@ -32,13 +32,62 @@ namespace OnlineTravelDiscussionForum.Controllers
             _mapper = mapper;
             _userService = userService;
         }
+
+        // GET: api/users/approval-request
+        [HttpPost("approval-request")]
+        [Authorize(Roles = StaticRoles.USER)]
+
+        public async Task<ActionResult<ApprovalResponseDto>> ApprovalRequest()
         {
-            return new string[] { "value1", "value2" };
+            try
+            {
+
+
+                var LogedinUserID = await _userService.GetCurrentUserId();
+               
+                if (LogedinUserID == null)
+                {
+                    return BadRequest("first login to see posts");
+                }
+                
+                var user =  await _userManager.FindByIdAsync(LogedinUserID);
+                if (user == null)
+                {
+                    return BadRequest("user not found");
+                }
+                //check if your aleady have a pending request
+                var pendingRequest = _context.ApprovalRequests.FirstOrDefault(request => request.UserID == LogedinUserID);
+                if (pendingRequest != null)
+                {
+                    return BadRequest("you already have a pending request");
+                }
+                var approvalRequestObj = new ApprovalRequest
+        {
+                    UserID = LogedinUserID,
+                    Status = ApprovalStatus.Pending,
+                    DateCreated = DateTime.Now
+                };
+                await _context.ApprovalRequests.AddAsync(approvalRequestObj);
+                await _context.SaveChangesAsync();
+
+                return Ok(new ApprovalResponseDto
+                {
+                    UserID = approvalRequestObj.UserID,
+                    Status = approvalRequestObj.Status,
+                    DateCreated = approvalRequestObj.DateCreated,
+                    RequestId = approvalRequestObj.RequestId
+                });
+
+        }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
         }
 
-        // GET api/<UserController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
         {
             return "value";
         }
