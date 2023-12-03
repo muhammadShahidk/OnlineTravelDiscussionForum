@@ -9,6 +9,7 @@ namespace OnlineTravelDiscussionForum.Modals
         public ICollection<Post> Posts { get; set; } = new List<Post>();
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
         public ICollection<ApprovalRequest> ApprovalRequests { get; set; } = new List<ApprovalRequest>();
+        public ICollection<SensitiveKeyword> SensitiveKeywords { get; set; } = new List<SensitiveKeyword>();
 
     }
 }
