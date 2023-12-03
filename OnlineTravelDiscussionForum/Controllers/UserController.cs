@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OnlineTravelDiscussionForum.Data;
 using OnlineTravelDiscussionForum.Dtos;
@@ -62,7 +62,7 @@ namespace OnlineTravelDiscussionForum.Controllers
                     return BadRequest("you already have a pending request");
                 }
                 var approvalRequestObj = new ApprovalRequest
-        {
+                {
                     UserID = LogedinUserID,
                     Status = ApprovalStatus.Pending,
                     DateCreated = DateTime.Now
@@ -78,7 +78,7 @@ namespace OnlineTravelDiscussionForum.Controllers
                     RequestId = approvalRequestObj.RequestId
                 });
 
-        }
+            }
             catch (Exception)
             {
 
@@ -138,26 +138,62 @@ namespace OnlineTravelDiscussionForum.Controllers
             if (AllRequests == null)
             {
                 return BadRequest("no requests found");
-        }
+            }
             var AllRequestsDto = _mapper.Map<List<ApprovalResponseDto>>(AllRequests);
 
             return Ok(AllRequestsDto);
 
 
         }
+
+
+        [HttpGet("sensitivekeyword")]
+        [Authorize(Roles = StaticRoles.USER)]
+        public async Task<ActionResult<List<SensitiveKeywordResponseDto>>> GetAllSensitiveKeywords()
         {
+            List<SensitiveKeyword> AllKeywords = await _context.SensitiveKeywords.ToListAsync();
+            if (AllKeywords == null || AllKeywords.Count <= 0)
+            {
+                return BadRequest("no keywords found");
+            }
+            return Ok(_mapper.Map<List<SensitiveKeywordResponseDto>>(AllKeywords));
         }
 
-        // PUT api/<UserController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPost("sensitivekeyword")]
+        [Authorize(Roles = StaticRoles.USER)]
+        public async Task<ActionResult<SensitiveKeywordResponseDto>> AddSensitiveKeyword(SensitiveKeywordRequestDto sensitiveKeywordDto)
         {
+            var LogedinUserID = CurrentUserID();
+            if (LogedinUserID == null)
+            {
+                return BadRequest("first login to see posts");
+            }
+            var user = await _userManager.FindByIdAsync(LogedinUserID);
+            if (user == null)
+            {
+                return BadRequest("user not found");
+            }
+            var keyword = await _context.SensitiveKeywords.FirstOrDefaultAsync(keyword => keyword.Keyword == sensitiveKeywordDto.Keyword);
+            if (keyword != null)
+            {
+                return BadRequest("keyword already exists");
+            }
+            var newKeyword = new SensitiveKeyword
+            {
+                Keyword = sensitiveKeywordDto.Keyword,
+                DateCreated = DateTime.Now,
+                UserId = LogedinUserID,
+            };
+            await _context.SensitiveKeywords.AddAsync(newKeyword);
+            await _context.SaveChangesAsync();
+            return Ok(_mapper.Map<SensitiveKeywordResponseDto>(newKeyword));
         }
 
-        // DELETE api/<UserController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+
+
+        private string? CurrentUserID()
         {
+            return User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         }
     }
 }
