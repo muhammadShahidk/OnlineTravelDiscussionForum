@@ -93,8 +93,7 @@ namespace OnlineTravelDiscussionForum.Services
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim("JWTID", Guid.NewGuid().ToString()),
-                new Claim("FirstName", user.FirstName),
-                new Claim("LastName", user.LastName),
+               
             };
 
             foreach (var userRole in userRoles)
