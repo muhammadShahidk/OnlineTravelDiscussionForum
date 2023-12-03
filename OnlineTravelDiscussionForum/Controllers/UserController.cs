@@ -88,8 +88,46 @@ namespace OnlineTravelDiscussionForum.Controllers
 
         }
 
+
+        [HttpPut("approval-request")]
+        [Authorize(Roles = StaticRoles.USER)]
+
+        public async Task<ActionResult<ApprovalResponseDto>> ApprovalRequest(ApprovalRequestDto approvalRequest)
         {
-            return "value";
+            var LogedinUserID = CurrentUserID();
+            if (LogedinUserID == null)
+            {
+                return BadRequest("first login to see posts");
+            }
+            var user = await _userManager.FindByIdAsync(LogedinUserID);
+            if (user == null)
+            {
+                return BadRequest("user not found");
+            }
+            //aprove request
+            var approvalRequestObj = _context.ApprovalRequests.FirstOrDefault(request => request.RequestId == approvalRequest.RequestId);
+            if (approvalRequestObj == null)
+            {
+                return BadRequest("request not found");
+            }
+            approvalRequestObj.Status = approvalRequest.Status;
+            approvalRequestObj.DateUpdated = DateTime.Now;
+            await _context.SaveChangesAsync();
+
+            return Ok(new ApprovalResponseDto
+            {
+                UserID = approvalRequestObj.UserID,
+                Status = approvalRequestObj.Status,
+                DateCreated = approvalRequestObj.DateCreated,
+                DateUpdated = approvalRequestObj.DateUpdated,
+                RequestId = approvalRequestObj.RequestId
+            });
+
+
+
+
+
+        }
         }
 
         // POST api/<UserController>
