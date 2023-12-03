@@ -124,10 +124,16 @@ namespace OnlineTravelDiscussionForum.Controllers
                 return BadRequest("no data to add");
             }
 
-            var userId = CurrentUserID();
+            var userId = await _userService.GetCurrentUserId();
             if (userId != null)
             {
-                //var currentUser = ;
+                //var currentUser = 
+                //check if user is using sensitive words in the post then first remove the sensitive words and then add the post
+                var sensitiveWords = await _context.SensitiveKeywords.ToListAsync();
+                post.Content = _userService.FilterSensitiveWords(post.Content, sensitiveWords);
+                post.Title = _userService.FilterSensitiveWords(post.Title, sensitiveWords);
+
+
                 var newPost = _context.Posts.Add(new Post { Title = post.Title, Content = post.Content, UserID = userId });
 
             }
@@ -136,6 +142,8 @@ namespace OnlineTravelDiscussionForum.Controllers
 
             return Ok("post added: -> " + post.Title);
         }
+
+
 
         private string? CurrentUserID()
         {
@@ -189,7 +197,7 @@ namespace OnlineTravelDiscussionForum.Controllers
             {
                 return BadRequest("please provide post id");
             }
-            var userid = CurrentUserID();
+            var userid = await _userService.GetCurrentUserId();
             if (userid == null)
             {
                 return BadRequest("please login to create comments");
@@ -201,7 +209,11 @@ namespace OnlineTravelDiscussionForum.Controllers
                 return BadRequest($"Post {id} was not found");
             }
 
-            var NewComment = new Comment { UserID = userid, Content = comment.Content, PostID = post.PostID };
+            //filtering sensitive words from the comment
+            var sensitiveWords = await _context.SensitiveKeywords.ToListAsync();
+            comment.Content = _userService.FilterSensitiveWords(comment.Content, sensitiveWords);
+
+            var NewComment = new Comment { UserID = userid, Content =  comment.Content, PostID = post.PostID };
 
 
 
@@ -224,7 +236,7 @@ namespace OnlineTravelDiscussionForum.Controllers
                     return BadRequest("Please provide a valid post ID");
                 }
 
-                var userId = CurrentUserID();
+                var userId = await _userService.GetCurrentUserId();
                 if (userId == null)
                 {
                     return BadRequest("Please log in to view comments");
@@ -254,6 +266,6 @@ namespace OnlineTravelDiscussionForum.Controllers
             }
         }
 
-       
+
     }
 }
