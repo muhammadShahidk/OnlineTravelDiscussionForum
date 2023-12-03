@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineTravelDiscussionForum.Data;
 
@@ -11,9 +12,11 @@ using OnlineTravelDiscussionForum.Data;
 namespace OnlineTravelDiscussionForum.Migrations
 {
     [DbContext(typeof(ForumDbContext))]
-    partial class ForumDataContextModelSnapshot : ModelSnapshot
+    [Migration("20231203142840_DateUpdatedPropertyAddedToApprovalRequest")]
+    partial class DateUpdatedPropertyAddedToApprovalRequest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -321,35 +324,6 @@ namespace OnlineTravelDiscussionForum.Migrations
                     b.ToTable("Posts");
                 });
 
-            modelBuilder.Entity("OnlineTravelDiscussionForum.Modals.SensitiveKeyword", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DateUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Keyword")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("SensitiveKeywords");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -442,17 +416,6 @@ namespace OnlineTravelDiscussionForum.Migrations
                     b.Navigation("user");
                 });
 
-            modelBuilder.Entity("OnlineTravelDiscussionForum.Modals.SensitiveKeyword", b =>
-                {
-                    b.HasOne("OnlineTravelDiscussionForum.Modals.ApplicationUser", "User")
-                        .WithMany("SensitiveKeywords")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("OnlineTravelDiscussionForum.Modals.ApplicationUser", b =>
                 {
                     b.Navigation("ApprovalRequests");
@@ -460,8 +423,6 @@ namespace OnlineTravelDiscussionForum.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("Posts");
-
-                    b.Navigation("SensitiveKeywords");
                 });
 
             modelBuilder.Entity("OnlineTravelDiscussionForum.Modals.Post", b =>
