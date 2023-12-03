@@ -128,11 +128,23 @@ namespace OnlineTravelDiscussionForum.Controllers
 
 
         }
-        }
 
-        // POST api/<UserController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpGet("approval-request")]
+        [Authorize(Roles = StaticRoles.USER)]
+        public async Task<ActionResult<ApprovalResponseDto>> GetAllAprovalRequests()
+        {
+            var AllRequests = await _context.ApprovalRequests.ToListAsync();
+            var approvalStatus = ApprovalStatus.Pending.ToString();
+            if (AllRequests == null)
+            {
+                return BadRequest("no requests found");
+        }
+            var AllRequestsDto = _mapper.Map<List<ApprovalResponseDto>>(AllRequests);
+
+            return Ok(AllRequestsDto);
+
+
+        }
         {
         }
 
