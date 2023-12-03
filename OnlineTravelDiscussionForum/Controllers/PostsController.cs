@@ -43,7 +43,7 @@ namespace OnlineTravelDiscussionForum.Controllers
         public async Task<ActionResult<IEnumerable<PostResponseDto>>> GetPosts()
         {
 
-            var userid = CurrentUserID();
+            var userid = await _userService.GetCurrentUserId();
             if (userid == null)
             {
                 return BadRequest("first login to see posts");
@@ -86,8 +86,10 @@ namespace OnlineTravelDiscussionForum.Controllers
                 return NotFound("no post exist");
             }
 
-            CurrentPost.Title = post.Title ?? CurrentPost.Title;
-            CurrentPost.Content = post.Content ?? CurrentPost.Content;
+            var sensitiveKeywords = await _context.SensitiveKeywords.ToListAsync();
+
+            CurrentPost.Title = _userService.FilterSensitiveWords(post.Title, sensitiveKeywords) ?? CurrentPost.Title;
+            CurrentPost.Content = _userService.FilterSensitiveWords(post.Content, sensitiveKeywords) ?? CurrentPost.Content;
 
             _context.Entry(CurrentPost).State = EntityState.Modified;
 
