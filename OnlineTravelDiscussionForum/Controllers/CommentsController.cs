@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OnlineTravelDiscussionForum.Data;
+using OnlineTravelDiscussionForum.Dtos;
+using OnlineTravelDiscussionForum.Interfaces;
 using OnlineTravelDiscussionForum.Modals;
+using OnlineTravelDiscussionForum.OtherObjects;
 
 namespace OnlineTravelDiscussionForum.Controllers
 {
@@ -16,59 +20,61 @@ namespace OnlineTravelDiscussionForum.Controllers
     public class CommentsController : ControllerBase
     {
         private readonly ForumDbContext _context;
+        private readonly IUserService _userService;
 
-        public CommentsController(ForumDbContext context)
+        public CommentsController(ForumDbContext context, IUserService userService)
         {
             _context = context;
+            _userService = userService;
         }
 
-       
-        // GET: api/Comments/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Comment>> GetComment(int id)
-        {
-            var comment = await _context.Comments.FindAsync(id);
-
-            if (comment == null)
-            {
-                return NotFound();
-            }
-
-                var commentToUpdate = await _context.Comments
-                    .FirstOrDefaultAsync(c => c.CommentId == id);
 
         // PUT: api/Comments/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutComment(int id, Comment comment)
+        public async Task<IActionResult> PutComment(int id, CommentRequestDto comment)
         {
-            if (id != comment.CommentId)
+           //update existing comment with id 
+           try
             {
-                return BadRequest();
-            }
+                if (id <= 0)
+                {
+                    return BadRequest("Please provide a valid comment ID");
+                }
 
-            _context.Entry(comment).State = EntityState.Modified;
+                if (comment == null)
+                {
+                    return BadRequest("Please provide a valid comment object");
+                }
 
-            try
-            {
+                var commentToUpdate = await _context.Comments
+                    .FirstOrDefaultAsync(c => c.CommentId == id);
+
+                if (commentToUpdate == null)
+                {
+                    return NotFound($"Comment {id} was not found");
+                }
+
+                // Update the comment object with the values from the request
+                commentToUpdate.Content = comment.Content;
+                commentToUpdate.DateUpdateAt = DateTime.Now;
+
+                // Save changes to the database
                 await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CommentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+                return Ok("Comment updated successfully");
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for debugging purposes
+                // logger.LogError(ex, "An error occurred while updating the comment.");
+
+                // Return a generic error message to the client
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
         }
 
-       
+
         // DELETE: api/Comments/5
         [Authorize(Roles = StaticRoles.USER)]
         [HttpDelete("{id}")]
