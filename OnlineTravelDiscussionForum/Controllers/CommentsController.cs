@@ -34,8 +34,8 @@ namespace OnlineTravelDiscussionForum.Controllers
                 return NotFound();
             }
 
-            return comment;
-        }
+                var commentToUpdate = await _context.Comments
+                    .FirstOrDefaultAsync(c => c.CommentId == id);
 
         // PUT: api/Comments/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
