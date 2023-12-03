@@ -18,9 +18,20 @@ namespace OnlineTravelDiscussionForum.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        // GET: api/<UserController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ForumDbContext _context;
+        private readonly IMapper _mapper;
+        private readonly IUserService _userService;
+
+
+
+        public UserController(UserManager<ApplicationUser> userManager, ForumDbContext context, IMapper mapper, IUserService userService)
+        {
+            _userManager = userManager;
+            _context = context;
+            _mapper = mapper;
+            _userService = userService;
+        }
         {
             return new string[] { "value1", "value2" };
         }
