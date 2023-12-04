@@ -2,6 +2,10 @@
 
 namespace OnlineTravelDiscussionForum.Dtos
 {
+    public class ARequestDto
+    {
+        public string  username { get; set; }
+    }
     public class ApprovalRequestDto
     {
 
