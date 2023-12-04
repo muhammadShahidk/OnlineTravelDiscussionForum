@@ -13,6 +13,8 @@ namespace OnlineTravelDiscussionForum.Data
         public DbSet<Comment> Comments { get; set; }
         public DbSet<ApprovalRequest> ApprovalRequests { get; set; }
         public DbSet<SensitiveKeyword> SensitiveKeywords { get; set; }
+        public DbSet<BandUser> BandUsers { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,6 +36,11 @@ namespace OnlineTravelDiscussionForum.Data
 
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany(c => c.SensitiveKeywords)
+                .WithOne(p => p.User)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ApplicationUser>()
+                .HasMany(c => c.BandUsers)
                 .WithOne(p => p.User)
                 .OnDelete(DeleteBehavior.Cascade);
 
