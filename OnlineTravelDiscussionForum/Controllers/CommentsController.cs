@@ -28,9 +28,7 @@ namespace OnlineTravelDiscussionForum.Controllers
             _userService = userService;
         }
 
-
-        // PUT: api/Comments/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = StaticRoles.MODERATOR)]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutComment(int id, CommentRequestDto comment)
         {
@@ -75,8 +73,7 @@ namespace OnlineTravelDiscussionForum.Controllers
         }
 
 
-        // DELETE: api/Comments/5
-        [Authorize(Roles = StaticRoles.USER)]
+        [Authorize(Roles = StaticRoles.MODERATOR)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteComment(int id)
         {
@@ -130,9 +127,6 @@ namespace OnlineTravelDiscussionForum.Controllers
             }
         }
 
-        private bool CommentExists(int id)
-        {
-            return _context.Comments.Any(e => e.CommentId == id);
-        }
+     
     }
 }
