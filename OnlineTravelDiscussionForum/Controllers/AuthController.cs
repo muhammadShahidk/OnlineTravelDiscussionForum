@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OnlineTravelDiscussionForum.Dtos;
 using OnlineTravelDiscussionForum.Interfaces;
+using OnlineTravelDiscussionForum.OtherObjects;
 
 namespace OnlineTravelDiscussionForum.Controllers
 {
@@ -46,6 +48,23 @@ namespace OnlineTravelDiscussionForum.Controllers
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
+            //check if use is approved by admin
+            try
+            {
+                var latestAprovalRequest = await _authService.CheckIfUserIsApproved(loginDto);
+                if (!latestAprovalRequest)
+                {
+                    return Unauthorized("Your account is not approved yet");
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                return Unauthorized(ex.Message);
+            }
+
+
             var loginResult = await _authService.LoginAsync(loginDto);
 
             if (loginResult.IsSucceed)
@@ -59,6 +78,7 @@ namespace OnlineTravelDiscussionForum.Controllers
         // Route -> make user -> admin
         [HttpPost]
         [Route("make-admin")]
+
         public async Task<IActionResult> MakeAdmin([FromBody] UpdatePermissionDto updatePermissionDto)
         {
             var operationResult = await _authService.MakeAdminAsync(updatePermissionDto);
@@ -72,6 +92,8 @@ namespace OnlineTravelDiscussionForum.Controllers
         // Route -> make user -> owner
         [HttpPost]
         [Route("make-moderator")]
+        [Authorize(Roles = $"{StaticRoles.ADMIN}")]
+
         public async Task<IActionResult> MakeOwner([FromBody] UpdatePermissionDto updatePermissionDto)
         {
             var operationResult = await _authService.MakeOwnerAsync(updatePermissionDto);
@@ -84,6 +106,8 @@ namespace OnlineTravelDiscussionForum.Controllers
 
         [HttpPost]
         [Route("get-user-rols")]
+        [Authorize(Roles = $"{StaticRoles.ADMIN},{StaticRoles.MODERATOR}")]
+
         public async Task<IActionResult> GetUserRols()
         {
             var operationResult = await _authService.GetUserRolsAsync();
