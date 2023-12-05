@@ -12,6 +12,8 @@
     {
         public int PostID { get; set; }
         public string UserID { get; set; }
+        public DateTime DateCreated { get; set; } 
+
 
     }
 }

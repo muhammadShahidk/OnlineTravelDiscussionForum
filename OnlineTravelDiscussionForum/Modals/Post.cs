@@ -5,6 +5,20 @@ namespace OnlineTravelDiscussionForum.Modals
 {
     public class Post
     {
+       public  Post()
+        {
+            this.DateCreated = DateTime.Now;
+        }
+        public Post(int postID, string title, string content, string userID, ApplicationUser user)
+        {
+            PostID = postID;
+            Title = title;
+            Content = content;
+            DateCreated = DateTime.Now;
+            UserID = userID;
+            this.user = user;
+        }
+
         [Key]
         public int PostID { get; set; }
 
