@@ -34,7 +34,40 @@ namespace OnlineTravelDiscussionForum.Controllers
             _userService = userService;
         }
 
-//approval requests handling
+        //user informations 
+        [HttpGet]
+        [Authorize(Roles = $"{StaticRoles.USER}")]
+
+        public async Task<ActionResult<UserResponseDto>> GetUserDetails()
+        {
+            var LogedinUserID = CurrentUserID();
+            if (LogedinUserID == null)
+            {
+                return BadRequest("first login to see posts");
+            }
+            var user = await _userManager.FindByIdAsync(LogedinUserID);
+            if (user == null)
+            {
+                return BadRequest("user not found");
+            }
+            var userResponse = _mapper.Map<UserResponseDto>(user);
+            var rolls =await _userManager.GetRolesAsync(user);
+            if(rolls == null)
+            {
+                return BadRequest("no rools");
+
+            }
+
+            userResponse.Rools.AddRange(rolls);
+
+           return Ok(userResponse);
+
+        }
+
+
+
+
+        //approval requests handling
 
         [HttpPost("approval-request")]
         //[Authorize(Roles = StaticRoles.USER)]

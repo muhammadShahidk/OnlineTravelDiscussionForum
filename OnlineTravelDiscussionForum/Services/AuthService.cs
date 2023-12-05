@@ -35,7 +35,8 @@ namespace OnlineTravelDiscussionForum.Services
             var user = await _userManager.FindByNameAsync(loginDto.UserName);
             if (user == null)
             {
-                return false;
+                throw new Exception("account does not exiest");
+
             }
 
             var userRools = await _userManager.GetRolesAsync(user);

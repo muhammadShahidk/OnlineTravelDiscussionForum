@@ -21,6 +21,9 @@ namespace OnlineTravelDiscussionForum
             CreateMap<SensitiveKeyword, SensitiveKeywordResponseDto>().ReverseMap();
             CreateMap<SensitiveKeyword, SensitiveKeywordRequestDto>().ReverseMap();
 
+            CreateMap<ApplicationUser, UserResponseDto>().ReverseMap();
+            CreateMap<ApplicationUser, UserRequestDto>().ReverseMap();
+
         }
     }
 }
