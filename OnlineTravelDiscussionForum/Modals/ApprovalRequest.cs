@@ -5,21 +5,22 @@ namespace OnlineTravelDiscussionForum.Modals
 {
     public class ApprovalRequest
     {
-        
-            [Key]
-            public int RequestId { get; set; }
 
-            public string UserID { get; set; }
+        [Key]
+        public int RequestId { get; set; }
 
-            [ForeignKey("UserID")]
-            public ApplicationUser User { get; set; }
+        public string UserID { get; set; }
 
-            [Required]
-            public DateTime DateCreated { get; set; } = DateTime.Now;
+        [ForeignKey("UserID")]
+        public ApplicationUser User { get; set; }
+
+        [Required]
+        public DateTime DateCreated { get; set; } = DateTime.Now;
+        public DateTime? DateUpdated { get; set; } = null;
 
         [Required]
         public ApprovalStatus Status { get; set; } = ApprovalStatus.Pending;
-        
+
     }
 
     public enum ApprovalStatus

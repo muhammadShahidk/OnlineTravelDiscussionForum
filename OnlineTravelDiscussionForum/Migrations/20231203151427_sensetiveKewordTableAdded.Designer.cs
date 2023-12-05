@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineTravelDiscussionForum.Data;
 
@@ -11,9 +12,11 @@ using OnlineTravelDiscussionForum.Data;
 namespace OnlineTravelDiscussionForum.Migrations
 {
     [DbContext(typeof(ForumDbContext))]
-    partial class ForumDataContextModelSnapshot : ModelSnapshot
+    [Migration("20231203151427_sensetiveKewordTableAdded")]
+    partial class sensetiveKewordTableAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -253,32 +256,7 @@ namespace OnlineTravelDiscussionForum.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("ApprovalRequests", (string)null);
-                });
-
-            modelBuilder.Entity("OnlineTravelDiscussionForum.Modals.BandUser", b =>
-                {
-                    b.Property<string>("BandId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("endDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("startDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("BandId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("BandUsers", (string)null);
+                    b.ToTable("ApprovalRequests");
                 });
 
             modelBuilder.Entity("OnlineTravelDiscussionForum.Modals.Comment", b =>
@@ -312,7 +290,7 @@ namespace OnlineTravelDiscussionForum.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("OnlineTravelDiscussionForum.Modals.Post", b =>
@@ -343,7 +321,7 @@ namespace OnlineTravelDiscussionForum.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("OnlineTravelDiscussionForum.Modals.SensitiveKeyword", b =>
@@ -372,7 +350,7 @@ namespace OnlineTravelDiscussionForum.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("SensitiveKeywords", (string)null);
+                    b.ToTable("SensitiveKeywords");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -437,17 +415,6 @@ namespace OnlineTravelDiscussionForum.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("OnlineTravelDiscussionForum.Modals.BandUser", b =>
-                {
-                    b.HasOne("OnlineTravelDiscussionForum.Modals.ApplicationUser", "User")
-                        .WithMany("BandUsers")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("OnlineTravelDiscussionForum.Modals.Comment", b =>
                 {
                     b.HasOne("OnlineTravelDiscussionForum.Modals.Post", "Post")
@@ -492,8 +459,6 @@ namespace OnlineTravelDiscussionForum.Migrations
             modelBuilder.Entity("OnlineTravelDiscussionForum.Modals.ApplicationUser", b =>
                 {
                     b.Navigation("ApprovalRequests");
-
-                    b.Navigation("BandUsers");
 
                     b.Navigation("Comments");
 

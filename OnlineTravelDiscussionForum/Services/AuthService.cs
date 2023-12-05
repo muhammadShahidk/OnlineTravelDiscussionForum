@@ -18,21 +18,59 @@ namespace OnlineTravelDiscussionForum.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
+        private readonly IUserService _userService;
         private readonly ForumDbContext _forumDbContext;
 
-        public AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, ForumDbContext forumDbContext)
+        public AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, ForumDbContext forumDbContext, IUserService userService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
             _forumDbContext = forumDbContext;
+            _userService = userService;
+        }
+
+        public async Task<bool> CheckIfUserIsApproved(LoginDto loginDto)
+        {
+            var user = await _userManager.FindByNameAsync(loginDto.UserName);
+            if (user == null)
+            {
+                return false;
+            }
+
+            var userRools = await _userManager.GetRolesAsync(user);
+            if (userRools.Contains(StaticRoles.ADMIN))
+            {
+                return true;
+            }
+
+            var LatestAprovalRequest = _forumDbContext.ApprovalRequests
+                .Where(x => x.UserID == user.Id).OrderByDescending(x => x.DateCreated).FirstOrDefault();
+
+            if (LatestAprovalRequest == null)
+            {
+                //make a errror that please make a request to admin
+                throw new Exception("Please make a request to admin");
+
+            }
+            else
+            {
+                if (LatestAprovalRequest.Status == ApprovalStatus.Aproved)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
 
         public async Task<List<UserRoleDto>> GetUserRolsAsync()
         {
             List<ApplicationUser> users;
             users = await _userManager.Users.ToListAsync();
-     
+
             //var users = _forumDbContext ;
 
 
@@ -42,8 +80,8 @@ namespace OnlineTravelDiscussionForum.Services
                 foreach (var user in users)
                 {
 
-                    var rools =(await _userManager.GetRolesAsync(user)).ToList();
-                    
+                    var rools = (await _userManager.GetRolesAsync(user)).ToList();
+
 
                     usersWithRolles.Add(
                          new UserRoleDto
@@ -93,8 +131,7 @@ namespace OnlineTravelDiscussionForum.Services
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim("JWTID", Guid.NewGuid().ToString()),
-                new Claim("FirstName", user.FirstName),
-                new Claim("LastName", user.LastName),
+
             };
 
             foreach (var userRole in userRoles)
@@ -123,6 +160,7 @@ namespace OnlineTravelDiscussionForum.Services
                 };
 
             await _userManager.AddToRoleAsync(user, StaticRoles.ADMIN);
+            await _userManager.RemoveFromRoleAsync(user, StaticRoles.USER);
 
             return new AuthServiceResponseDto()
             {

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineTravelDiscussionForum.Data;
 
@@ -11,9 +12,11 @@ using OnlineTravelDiscussionForum.Data;
 namespace OnlineTravelDiscussionForum.Migrations
 {
     [DbContext(typeof(ForumDbContext))]
-    partial class ForumDataContextModelSnapshot : ModelSnapshot
+    [Migration("20231204092217_bandUserTableisAdded")]
+    partial class bandUserTableisAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -253,7 +256,7 @@ namespace OnlineTravelDiscussionForum.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("ApprovalRequests", (string)null);
+                    b.ToTable("ApprovalRequests");
                 });
 
             modelBuilder.Entity("OnlineTravelDiscussionForum.Modals.BandUser", b =>
@@ -278,7 +281,7 @@ namespace OnlineTravelDiscussionForum.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("BandUsers", (string)null);
+                    b.ToTable("BandUsers");
                 });
 
             modelBuilder.Entity("OnlineTravelDiscussionForum.Modals.Comment", b =>
@@ -312,7 +315,7 @@ namespace OnlineTravelDiscussionForum.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("OnlineTravelDiscussionForum.Modals.Post", b =>
@@ -343,7 +346,7 @@ namespace OnlineTravelDiscussionForum.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("OnlineTravelDiscussionForum.Modals.SensitiveKeyword", b =>
@@ -372,7 +375,7 @@ namespace OnlineTravelDiscussionForum.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("SensitiveKeywords", (string)null);
+                    b.ToTable("SensitiveKeywords");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

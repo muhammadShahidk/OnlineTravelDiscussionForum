@@ -8,10 +8,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Hosting;
+using Microsoft.VisualBasic;
 using OnlineTravelDiscussionForum.Data;
 using OnlineTravelDiscussionForum.Dtos;
+using OnlineTravelDiscussionForum.Interfaces;
 using OnlineTravelDiscussionForum.Modals;
 using OnlineTravelDiscussionForum.OtherObjects;
 
@@ -23,135 +27,113 @@ namespace OnlineTravelDiscussionForum.Controllers
     {
         private readonly ForumDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IUserService _userService;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public PostsController(ForumDbContext context, IMapper mapper, UserManager<ApplicationUser> userManager)
+        public PostsController(ForumDbContext context, IMapper mapper, UserManager<ApplicationUser> userManager, IUserService userService)
         {
             _context = context;
             _mapper = mapper;
             _userManager = userManager;
+            _userService = userService;
         }
 
-        // GET: api/Posts
+        //all posts 
         [HttpGet]
+        [Authorize(Roles = $"{StaticRoles.USER}")]
         public async Task<ActionResult<IEnumerable<PostResponseDto>>> GetPosts()
         {
 
+           
             var posts = await _context.Posts.ToListAsync();
-            //PostResponseDto[] postsResponse = posts.Select(x=>new PostResponseDto {Id = x.PostID, Title = x.Title , Content = x.Content }).ToArray();
- 
+               
+            if(posts == null)
+            {
+                return NotFound("no posts to show");
+            }   
             return _mapper.Map<List<PostResponseDto>>(posts); ;
-            
+
         }
 
-        // GET: api/Posts/5
-        [HttpGet("{id}")]
+
+
+        //get post by id
+        [HttpGet("{id}"), Authorize(Roles = $"{StaticRoles.USER}")]
         public async Task<ActionResult<PostResponseDto>> GetPost(int id)
         {
             var post = await _context.Posts.FindAsync(id);
 
             if (post == null)
             {
-                return NotFound();
+                return NotFound("no post exist");
             }
 
-            return _mapper.Map<PostResponseDto>(post); ;
+            return _mapper.Map<PostResponseDto>(post);
         }
 
-        // PUT: api/Posts/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPost(int id, Post post)
-        {
-            if (id != post.PostID)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(post).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PostExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Posts
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        [Route("newPost")]
-        [Authorize(Roles = StaticRoles.USER)]
-        public async Task<ActionResult<Post>> PostPost(PostRequestDto post)
-        {
-            
-            if (post == null)
-            {
-                return BadRequest("no data to add");
-            }
-
-            var userId =  User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userId != null)
-            {
-                //var currentUser = ;
-                var newPost = _context.Posts.Add(new Post { Title=post.Title, Content = post.Content, UserID = userId });
-
-            }
-
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction($"Post",post);
-        }
-
-        // DELETE: api/Posts/5
+      
+        //Delete post
         [HttpDelete("{id}")]
+        [Authorize(Roles = $"{StaticRoles.ADMIN},{StaticRoles.MODERATOR}")]
         public async Task<IActionResult> DeletePost(int id)
         {
             var post = await _context.Posts.FindAsync(id);
             if (post == null)
             {
-                return NotFound();
+                return NotFound("no post exist");
             }
 
             _context.Posts.Remove(post);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+           return Ok("post deleted");
+           
         }
-        [HttpPost("test{id}")]
-        public async Task<IActionResult> test(int id)
-        {
-            return(Ok("id:"+id));
-        }
+       
+        
 
-        [HttpPut("multiple")]
-        public IActionResult GetMultipleData( [FromHeader] string header1, [FromBody] dynamic bodyData , [FromQuery] string? param1 = null)
+        //get post comments
+        [Authorize(Roles = StaticRoles.USER)]
+        [HttpGet("{id}/comments")]
+        public async Task<IActionResult> GetComments(int id)
         {
-            var result = new
+                var userId = await _userService.GetCurrentUserId();
+            try
             {
-                Param1 = param1,
-                Header1 = header1,
-                BodyData = bodyData
-            };
+                if (id <= 0)
+                {
+                    return BadRequest("Please provide a valid post ID");
+                }
 
-            return Ok(result);
+                if (userId == null)
+                {
+                    return BadRequest("Please log in to view comments");
+                }
+
+                var postWithComments = await _context.Posts
+                    .Include(p => p.Comments)
+                    .FirstOrDefaultAsync(p => p.PostID == id);
+
+                if (postWithComments == null)
+                {
+                    return NotFound($"Post {id} was not found");
+                }
+
+                var commentsForPost = postWithComments.Comments.ToList();
+                var commentResponseDtos = _mapper.Map<List<CommentResposnceDto>>(commentsForPost);
+
+                return Ok(commentResponseDtos);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for debugging purposes
+                // logger.LogError(ex, "An error occurred while getting comments.");
+
+                // Return a generic error message to the client
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
         }
 
-        private bool PostExists(int id)
-        {
-            return _context.Posts.Any(e => e.PostID == id);
-        }
+
     }
 }

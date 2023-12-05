@@ -16,7 +16,7 @@ namespace OnlineTravelDiscussionForum.Modals
         public string Content { get; set; }
 
         [Required]
-        public DateTime DateCreated { get; set; }
+        public DateTime DateCreated { get; set; } = DateTime.Now;
 
        
 
