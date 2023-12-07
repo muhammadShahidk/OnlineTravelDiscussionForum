@@ -45,7 +45,7 @@ namespace OnlineTravelDiscussionForum.Controllers
         {
 
            
-            var posts = await _context.Posts.ToListAsync();
+            var posts = await _context.Posts.Include(c=>c.user).ToListAsync();
                
             if(posts == null)
             {
@@ -61,7 +61,7 @@ namespace OnlineTravelDiscussionForum.Controllers
         [HttpGet("{id}"), Authorize(Roles = $"{StaticRoles.USER}")]
         public async Task<ActionResult<PostResponseDto>> GetPost(int id)
         {
-            var post = await _context.Posts.FindAsync(id);
+            var post = await _context.Posts.Include(c=>c.user).FirstAsync(x=>x.PostID == id);
 
             if (post == null)
             {
@@ -112,6 +112,7 @@ namespace OnlineTravelDiscussionForum.Controllers
 
                 var postWithComments = await _context.Posts
                     .Include(p => p.Comments)
+                    .ThenInclude(c => c.User)
                     .FirstOrDefaultAsync(p => p.PostID == id);
 
                 if (postWithComments == null)
@@ -119,8 +120,18 @@ namespace OnlineTravelDiscussionForum.Controllers
                     return NotFound($"Post {id} was not found");
                 }
 
+
                 var commentsForPost = postWithComments.Comments.ToList();
                 var commentResponseDtos = _mapper.Map<List<CommentResposnceDto>>(commentsForPost);
+                //foreach (var item in commentResponseDtos)
+                //{
+                //    if (commentsForPost[0].User == null)
+                //    {
+                //        break;
+                //    }
+                //    item.Username = commentsForPost.Find(x=>x.UserID == item.UserID).User.UserName;  
+                //    item.name = commentsForPost.Find(x => x.UserID == item.UserID).User.FirstName;
+                //}
 
                 return Ok(commentResponseDtos);
             }

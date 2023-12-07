@@ -12,7 +12,9 @@
     {
         public int PostID { get; set; }
         public string UserID { get; set; }
-        public DateTime DateCreated { get; set; } 
+        public DateTime DateCreated { get; set; }
+        public string Username { get; set; }
+        public string name { get; set; }
 
 
     }

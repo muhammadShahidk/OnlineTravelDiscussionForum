@@ -309,7 +309,7 @@ namespace OnlineTravelDiscussionForum.Controllers
             {
                 return BadRequest("first login to see posts");
             }
-            var posts = await _context.Posts.Where(x => x.UserID == userid).ToListAsync();
+            var posts = await _context.Posts.Where(x => x.UserID == userid).Include(c=>c.user).ToListAsync();
             //PostResponseDto[] postsResponse = posts.Select(x=>new PostResponseDto {Id = x.PostID, Title = x.Title , Content = x.Content }).ToArray();
 
             return _mapper.Map<List<PostResponseDto>>(posts); ;
@@ -458,7 +458,7 @@ namespace OnlineTravelDiscussionForum.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok("comment added: -> " + comment.Content);
+            return Ok(new { message= "comment added" ,comment = comment.Content});
            
         }
 
@@ -484,6 +484,7 @@ namespace OnlineTravelDiscussionForum.Controllers
                 //get current user posts with comments
                 var postWithComments = await _context.Posts
                     .Include(p => p.Comments)
+                    .ThenInclude(c => c.User)
                     .FirstOrDefaultAsync(p => p.PostID == id && p.UserID == userId);
 
                 if (postWithComments == null)
