@@ -36,11 +36,11 @@ namespace OnlineTravelDiscussionForum.Controllers
 
         //user informations 
         [HttpGet]
-        [Authorize(Roles = $"{StaticRoles.USER}")]
+        [Authorize(Roles = $"{StaticRoles.USER},{StaticRoles.ADMIN}")]
 
         public async Task<ActionResult<UserResponseDto>> GetUserDetails()
         {
-            var LogedinUserID = CurrentUserID();
+            var LogedinUserID = await _userService.GetCurrentUserId();
             if (LogedinUserID == null)
             {
                 return BadRequest("first login to see posts");
@@ -92,7 +92,7 @@ namespace OnlineTravelDiscussionForum.Controllers
                 //    return BadRequest("user not found");
                 //}
                 //check if your aleady have a pending request
-                var pendingRequest = _context.ApprovalRequests.FirstOrDefault(request => request.UserID == user.Id);
+                var pendingRequest = _context.ApprovalRequests.Include(x => x.User).FirstOrDefault(request => request.UserID == user.Id);
                 if (pendingRequest != null)
                 {
                     return BadRequest("you already have a pending request");
@@ -130,7 +130,7 @@ namespace OnlineTravelDiscussionForum.Controllers
 
         public async Task<ActionResult<ApprovalResponseDto>> ApprovalRequest(ApprovalRequestDto approvalRequest)
         {
-            var LogedinUserID = CurrentUserID();
+            var LogedinUserID = await _userService.GetCurrentUserId();
             if (LogedinUserID == null)
             {
                 return BadRequest("first login to see posts");
@@ -141,7 +141,7 @@ namespace OnlineTravelDiscussionForum.Controllers
                 return BadRequest("user not found");
             }
             //aprove request
-            var approvalRequestObj = _context.ApprovalRequests.FirstOrDefault(request => request.RequestId == approvalRequest.RequestId);
+            var approvalRequestObj = _context.ApprovalRequests.Include(x=>x.User).FirstOrDefault(request => request.RequestId == approvalRequest.RequestId);
             if (approvalRequestObj == null)
             {
                 return BadRequest("request not found");
@@ -170,7 +170,7 @@ namespace OnlineTravelDiscussionForum.Controllers
 
         public async Task<ActionResult<ApprovalResponseDto>> GetAllAprovalRequests()
         {
-            var AllRequests = await _context.ApprovalRequests.ToListAsync();
+            var AllRequests = await _context.ApprovalRequests.Include(x=>x.User).ToListAsync();
             var approvalStatus = ApprovalStatus.Pending.ToString();
             if (AllRequests == null)
             {
@@ -205,7 +205,7 @@ namespace OnlineTravelDiscussionForum.Controllers
 
         public async Task<ActionResult<SensitiveKeywordResponseDto>> AddSensitiveKeyword(SensitiveKeywordRequestDto sensitiveKeywordDto)
         {
-            var LogedinUserID = CurrentUserID();
+            var LogedinUserID = await _userService.GetCurrentUserId();
             if (LogedinUserID == null)
             {
                 return BadRequest("first login to see posts");
@@ -232,69 +232,35 @@ namespace OnlineTravelDiscussionForum.Controllers
         }
 
 
-        //user profile handling
-
-        [HttpPut("password")]
-        [Authorize(Roles = StaticRoles.USER)]
-        public async Task<ActionResult> ChangePassword(ChangePasswordDto changePasswordDto)
+        [HttpDelete("sensitivekeyword/{id}")]
+        [Authorize(Roles = $"{StaticRoles.ADMIN}")]
+        public async Task<ActionResult> DeleteSensitiveKeyword(int id)
         {
-            var LogedinUserID = CurrentUserID();
-            if (LogedinUserID == null)
+            var keyword = await _context.SensitiveKeywords.FirstOrDefaultAsync(keyword => keyword.Id == id);
+            if (keyword == null)
             {
-                return BadRequest("first login to see posts");
+                return BadRequest("keyword not found");
             }
-            var user = await _userManager.FindByIdAsync(LogedinUserID);
-            if (user == null)
-            {
-                return BadRequest("user not found");
-            }
-            var result = await _userManager.ChangePasswordAsync(user, changePasswordDto.CurrentPassword, changePasswordDto.NewPassword);
-            if (!result.Succeeded)
-            {
-                return BadRequest("password change failed");
-            }
-            return Ok("password changed successfully");
-        }
-        private string? CurrentUserID()
-        {
-            return User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            _context.SensitiveKeywords.Remove(keyword);
+            await _context.SaveChangesAsync();
+            return Ok("keyword deleted");
         }
 
-
-        [HttpGet("forgot-password")]
-        public async Task<ActionResult> ForgotPasswordToken(forgotPasswordDto forgotPassword)
+        [HttpPut("sensitivekeyword/{id}")]
+        [Authorize(Roles = $"{StaticRoles.ADMIN}")]
+        public async Task<ActionResult> UpdateSensitiveKeyword(int id, SensitiveKeywordRequestDto sensitiveKeywordDto)
         {
-            //var LogedinUserID = CurrentUserID();
-            //if (LogedinUserID == null)
-            //{
-            //    return BadRequest("first login to get reset Token");
-            //}
-            var user = await _userManager.FindByNameAsync(forgotPassword.Username);
-            if (user == null)
+            var keyword = await _context.SensitiveKeywords.FirstOrDefaultAsync(keyword => keyword.Id == id);
+            if (keyword == null)
             {
-                return BadRequest("user not found");
+                return BadRequest("keyword not found");
             }
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-          
-            return Ok("password Rest Token:  "+token);
-        }   
-
-        [HttpPut("forgot-password")]
-        public async Task<ActionResult> ForgotPassword(ResetPasswordDto resetPasswordDto)
-        {
-          
-            var user = await _userManager.FindByNameAsync(resetPasswordDto.Username);
-            if (user == null)
-            {
-                return BadRequest("user not found");
-            }
-            var result = await _userManager.ResetPasswordAsync(user, resetPasswordDto.ResetToken, resetPasswordDto.NewPassword);
-            if (!result.Succeeded)
-            {
-                return BadRequest("password reset failed");
-            }
-            return Ok("password reset successfully");
+            keyword.Keyword = sensitiveKeywordDto.Keyword;
+            keyword.DateUpdated = DateTime.Now;
+            await _context.SaveChangesAsync();
+            return Ok("keyword updated");
         }
+        
 
 
         //user posts handling 

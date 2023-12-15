@@ -104,6 +104,24 @@ namespace OnlineTravelDiscussionForum.Controllers
             return BadRequest(operationResult);
         }
 
+
+        //MAKE USER -> USER IF HE IS ADMIN OR MODERATOR
+        [HttpPost]
+        [Route("make-user")]
+        [Authorize(Roles = $"{StaticRoles.ADMIN}")]
+        public async Task<IActionResult> MakeUser([FromBody] UpdatePermissionDto updatePermissionDto)
+        {
+            var operationResult = await _authService.MakeUserAsync(updatePermissionDto);
+
+            if (operationResult.IsSucceed)
+                return Ok(operationResult);
+
+            return BadRequest(operationResult);
+        }
+
+
+
+
         [HttpPost]
         [Route("get-user-rols")]
         [Authorize(Roles = $"{StaticRoles.ADMIN},{StaticRoles.MODERATOR}")]
