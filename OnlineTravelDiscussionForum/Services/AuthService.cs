@@ -190,6 +190,28 @@ namespace OnlineTravelDiscussionForum.Services
             };
         }
 
+        public async Task<AuthServiceResponseDto> MakeUserAsync(UpdatePermissionDto updatePermissionDto)
+        {
+            var user = await _userManager.FindByNameAsync(updatePermissionDto.UserName);
+
+            if (user is null)
+                return new AuthServiceResponseDto()
+                {
+                    IsSucceed = false,
+                    Message = "Invalid User name!!!!!!!!"
+                };
+
+            await _userManager.AddToRoleAsync(user, StaticRoles.USER);
+            await _userManager.RemoveFromRoleAsync(user, StaticRoles.MODERATOR);
+
+
+            return new AuthServiceResponseDto()
+            {
+                IsSucceed = true,
+                Message = $"User is now an {StaticRoles.USER}"
+            };
+        }
+
         public async Task<AuthServiceResponseDto> RegisterAsync(RegisterDto registerDto)
         {
             var isExistsUser = await _userManager.FindByNameAsync(registerDto.UserName);

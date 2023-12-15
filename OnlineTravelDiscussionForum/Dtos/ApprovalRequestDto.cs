@@ -18,6 +18,9 @@ namespace OnlineTravelDiscussionForum.Dtos
     {
         public DateTime DateCreated { get; set; } 
         public DateTime? DateUpdated { get; set; }
+        public string Username { get; set; }
+        public string name { get; set; }
+
         public string UserID { get; set; }
 
 
