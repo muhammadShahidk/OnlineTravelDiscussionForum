@@ -20,19 +20,21 @@ namespace OnlineTravelDiscussionForum.Controllers
         private readonly ForumDbContext _context;
         private readonly IMapper _mapper;
         private readonly IUserService _userService;
+        private readonly IProfileService _ProfileService;
 
-        public ProfileController(UserManager<ApplicationUser> userManager, ForumDbContext context, IMapper mapper, IUserService userService)
+        public ProfileController(UserManager<ApplicationUser> userManager, ForumDbContext context, IMapper mapper, IUserService userService, IProfileService profileService)
         {
             _userManager = userManager;
             _context = context;
             _mapper = mapper;
             _userService = userService;
+            _ProfileService = profileService;
         }
 
 
         [HttpPut("User")]
         [Authorize(Roles = $"{StaticRoles.USER},{StaticRoles.ADMIN},{StaticRoles.MODERATOR}")]
-        public async Task<IActionResult> UpdateUser( [FromBody] UpdateUserDetailsDto userRequestDto)
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDetailsDto userRequestDto)
         {
             var user = await _userService.GetCurrentUser();
             if (user == null)
@@ -42,7 +44,7 @@ namespace OnlineTravelDiscussionForum.Controllers
 
             user.FirstName = userRequestDto.FirstName;
             user.LastName = userRequestDto.LastName;
-            await _userManager.SetEmailAsync(user,userRequestDto.Email);
+            await _userManager.SetEmailAsync(user, userRequestDto.Email);
             //user.Email = userRequestDto.Email;
 
             var result = await _userManager.UpdateAsync(user);
@@ -79,58 +81,40 @@ namespace OnlineTravelDiscussionForum.Controllers
             }
             return Ok("password changed successfully");
         }
-    
 
-        [HttpGet("forgot-password")]
+
+        [HttpPost("forgot-password")]
         public async Task<ActionResult> ForgotPasswordToken(forgotPasswordDto forgotPassword)
         {
-            //var LogedinUserID = CurrentUserID();
-            //if (LogedinUserID == null)
-            //{
-            //    return BadRequest("first login to get reset Token");
-            //}
-            var user = await _userManager.FindByNameAsync(forgotPassword.Username);
+
+            var user = await _userManager.FindByEmailAsync(forgotPassword.Email);
             if (user == null)
             {
-                return BadRequest("user not found");
+                return BadRequest("email is not registred ");
             }
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            //var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-            var link = Url.Action("ResetPassword", "Profile", new { userId = user.Id, token }, Request.Scheme);
+            //var link = Url.Action("ResetPassword", "Profile", new { userId = user.Id, token }, Request.Scheme);
+            
+            var result = await _ProfileService.SendForgotPasswordEmail(user);
+            if (!result)
+            {
+                return BadRequest("email is not registred ");
+            }
 
-
-
-            return Ok(new {link = link});
+            return Ok("email is sent to your email ");
         }
 
+        
         [HttpPut("forgot-password")]
         public async Task<ActionResult> ForgotPassword(ResetPasswordDto resetPasswordDto)
         {
-
-            var user = await _userManager.FindByNameAsync(resetPasswordDto.Username);
-            if (user == null)
-            {
-                return BadRequest("user not found");
-            }
-            var result = await _userManager.ResetPasswordAsync(user, resetPasswordDto.ResetToken, resetPasswordDto.NewPassword);
-            if (!result.Succeeded)
-            {
-                return BadRequest("password reset failed");
-            }
-            return Ok("password reset successfully");
-        }
-
-       
-        
-        [HttpPost("reset-password")]
-        public async Task<ActionResult> ResetPassword([FromQuery] ResetPasswordDto2 model)
-        {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByIdAsync(model.UserId);
+                var user = await _userManager.FindByIdAsync(resetPasswordDto.UserId);
                 if (user != null)
                 {
-                    var result = await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
+                    var result = await _userManager.ResetPasswordAsync(user, resetPasswordDto.Token, resetPasswordDto.NewPassword);
 
                     if (result.Succeeded)
                     {

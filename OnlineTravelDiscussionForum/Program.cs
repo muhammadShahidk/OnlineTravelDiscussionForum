@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using OnlineTravelDiscussionForum;
 using OnlineTravelDiscussionForum.Data;
 using OnlineTravelDiscussionForum.Dtos;
 using OnlineTravelDiscussionForum.Interfaces;
@@ -26,6 +27,8 @@ builder.Services.AddDbContext<ForumDbContext>(options =>
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IEMailService, EmailService>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
 
 
 // Add Identity
@@ -44,9 +47,10 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireUppercase = false;
     options.Password.RequireNonAlphanumeric = false;
     options.SignIn.RequireConfirmedEmail = false;
+//setup email configuration email correction
+    options.User.RequireUniqueEmail = true;
     //options.Tokens.
 });
-
 
 
 
@@ -109,6 +113,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseMiddleware<ApiResponseMiddleware>();
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();

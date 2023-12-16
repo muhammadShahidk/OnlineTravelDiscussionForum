@@ -18,15 +18,19 @@ namespace OnlineTravelDiscussionForum
 
             CreateMap<CommentResposnceDto, Comment>();
             CreateMap<Comment, CommentResposnceDto>()
-                     .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.FirstName))
-             .ForMember(dest => dest.name, opt => opt.MapFrom(src => src.User.FirstName));
+                     .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.UserName))
+                      .ForMember(dest => dest.name, opt => opt.MapFrom(src => src.User.FirstName));
 
 
 
             CreateMap<Comment, CommentRequestDto>().ReverseMap();
 
 
-            CreateMap<ApprovalRequest, ApprovalResponseDto>().ReverseMap();
+            CreateMap<ApprovalResponseDto, ApprovalRequest>().ReverseMap();
+            CreateMap<ApprovalRequest, ApprovalResponseDto>()
+                .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.UserName))
+                .ForMember(dest => dest.name, opt => opt.MapFrom(src => src.User.FirstName));
+
             CreateMap<ApprovalRequest, ApprovalRequestDto>().ReverseMap();
 
             CreateMap<SensitiveKeyword, SensitiveKeywordResponseDto>().ReverseMap();

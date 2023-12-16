@@ -15,6 +15,7 @@ namespace OnlineTravelDiscussionForum.Services
 
 
 
+
         public UserService(IHttpContextAccessor httpContextAccessor, ForumDbContext context, UserManager<ApplicationUser> userManager)
         {
             _httpContextAccessor = httpContextAccessor;
