@@ -1,0 +1,29 @@
+Resouce Group
+    OnlineDiscusstionForumDev
+        onlinetravelhub-server
+        onlinetravelhub-database
+
+
+OnlineDiscusstionForumDev234234
+travelhubIdentity
+
+key: ddd3cc0b-2636-47a8-8ded-f1efa4a5e39f
+ddd3cc0b-2636-47a8-8ded-f1efa4a5e39f
+
+Server=tcp:onlinetravelhub-server.database.windows.net,1433;Initial Catalog=onlinetravelhub-database;Persist Security Info=False;User ID=shahid;Password=OnlineDiscusstionForumDev234234;
+
+
+Severity	Code	Description	Project	File	Line	Suppression State	Details
+Error		Web deployment task failed. (Connected to the remote computer ("onlinetravelhub.scm.azurewebsites.net") using the Web Management Service, but could not authorize. Make sure that you are using the correct user name and password, that the site you are connecting to exists, and that the credentials represent a user who has permissions to access the site.  Learn more at: https://go.microsoft.com/fwlink/?LinkId=221672#ERROR_USER_UNAUTHORIZED.)
+Make sure the site name, user name, and password are correct. If the issue is not resolved, please contact your local or server administrator.
+Error details:
+Connected to the remote computer ("onlinetravelhub.scm.azurewebsites.net") using the Web Management Service, but could not authorize. Make sure that you are using the correct user name and password, that the site you are connecting to exists, and that the credentials represent a user who has permissions to access the site.  Learn more at: https://go.microsoft.com/fwlink/?LinkId=221672#ERROR_USER_UNAUTHORIZED.
+The remote server returned an error: (401) Unauthorized.	OnlineTravelDiscussionForum		0		
+
+Severity	Code	Description	Project	File	Line	Suppression State	Details
+Error		Web deployment task failed. (Connected to the remote computer ("onlinetravelhub.scm.azurewebsites.net") using the Web Management Service, but could not authorize. Make sure that you are using the correct user name and password, that the site you are connecting to exists, and that the credentials represent a user who has permissions to access the site.  Learn more at: https://go.microsoft.com/fwlink/?LinkId=221672#ERROR_USER_UNAUTHORIZED.)
+Make sure the site name, user name, and password are correct. If the issue is not resolved, please contact your local or server administrator.
+Error details:
+Connected to the remote computer ("onlinetravelhub.scm.azurewebsites.net") using the Web Management Service, but could not authorize. Make sure that you are using the correct user name and password, that the site you are connecting to exists, and that the credentials represent a user who has permissions to access the site.  Learn more at: https://go.microsoft.com/fwlink/?LinkId=221672#ERROR_USER_UNAUTHORIZED.
+The remote server returned an error: (401) Unauthorized.	OnlineTravelDiscussionForum		0		
+
