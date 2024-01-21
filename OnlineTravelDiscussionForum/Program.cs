@@ -56,13 +56,14 @@ builder.Services.Configure<IdentityOptions>(options =>
 
 
 
-// Add Authentication and JwtBearer
+// Add Authentication and JwtBearer 
 builder.Services
     .AddAuthentication(options =>
     {
         options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
     })
     .AddJwtBearer(options =>
     {
@@ -76,10 +77,10 @@ builder.Services
             ValidAudience = builder.Configuration["JWT:ValidAudience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
         };
-    })
-    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+    });
+    //.AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
+//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
 
 builder.Services.AddControllers();
 builder.Services.AddCors(options =>
