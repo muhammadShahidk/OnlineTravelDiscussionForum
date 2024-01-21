@@ -16,7 +16,8 @@ using Microsoft.Identity.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+
+//Add services to the container.
 //auth 
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);

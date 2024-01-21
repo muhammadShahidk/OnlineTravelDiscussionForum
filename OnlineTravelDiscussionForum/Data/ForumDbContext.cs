@@ -41,7 +41,7 @@ namespace OnlineTravelDiscussionForum.Data
 
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany(c => c.BandUsers)
-                .WithOne(p => p.User)
+                .WithOne(p => p.user)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Post>()

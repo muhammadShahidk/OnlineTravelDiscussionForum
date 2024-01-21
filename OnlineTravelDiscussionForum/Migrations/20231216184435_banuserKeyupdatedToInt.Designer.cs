@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineTravelDiscussionForum.Data;
 
@@ -11,9 +12,11 @@ using OnlineTravelDiscussionForum.Data;
 namespace OnlineTravelDiscussionForum.Migrations
 {
     [DbContext(typeof(ForumDbContext))]
-    partial class ForumDataContextModelSnapshot : ModelSnapshot
+    [Migration("20231216184435_banuserKeyupdatedToInt")]
+    partial class banuserKeyupdatedToInt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -253,7 +256,7 @@ namespace OnlineTravelDiscussionForum.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("ApprovalRequests", (string)null);
+                    b.ToTable("ApprovalRequests");
                 });
 
             modelBuilder.Entity("OnlineTravelDiscussionForum.Modals.BandUser", b =>
@@ -267,7 +270,7 @@ namespace OnlineTravelDiscussionForum.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserID")
+                    b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
@@ -279,9 +282,9 @@ namespace OnlineTravelDiscussionForum.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("UserId");
 
-                    b.ToTable("BandUsers", (string)null);
+                    b.ToTable("BandUsers");
                 });
 
             modelBuilder.Entity("OnlineTravelDiscussionForum.Modals.Comment", b =>
@@ -315,7 +318,7 @@ namespace OnlineTravelDiscussionForum.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("OnlineTravelDiscussionForum.Modals.Post", b =>
@@ -346,7 +349,7 @@ namespace OnlineTravelDiscussionForum.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("OnlineTravelDiscussionForum.Modals.SensitiveKeyword", b =>
@@ -375,7 +378,7 @@ namespace OnlineTravelDiscussionForum.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("SensitiveKeywords", (string)null);
+                    b.ToTable("SensitiveKeywords");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -442,13 +445,13 @@ namespace OnlineTravelDiscussionForum.Migrations
 
             modelBuilder.Entity("OnlineTravelDiscussionForum.Modals.BandUser", b =>
                 {
-                    b.HasOne("OnlineTravelDiscussionForum.Modals.ApplicationUser", "user")
+                    b.HasOne("OnlineTravelDiscussionForum.Modals.ApplicationUser", "User")
                         .WithMany("BandUsers")
-                        .HasForeignKey("UserID")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("user");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("OnlineTravelDiscussionForum.Modals.Comment", b =>

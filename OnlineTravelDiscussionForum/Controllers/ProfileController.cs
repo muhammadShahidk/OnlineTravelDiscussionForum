@@ -86,7 +86,20 @@ namespace OnlineTravelDiscussionForum.Controllers
         [HttpPost("forgot-password")]
         public async Task<ActionResult> ForgotPasswordToken(forgotPasswordDto forgotPassword)
         {
+//dummy token generation if we do not have email in production
+            if (forgotPassword.Username != null)
+            {
+                var _user = await _userManager.FindByNameAsync(forgotPassword.Username);
+                if (_user == null)
+                {
+                    return BadRequest("username is not registred ");
+                }
+                var _token = await _userManager.GeneratePasswordResetTokenAsync(_user);
 
+                return Ok(new { userid = _user.Id, token = _token });
+            }
+
+//actual token generation if we have email in production
             var user = await _userManager.FindByEmailAsync(forgotPassword.Email);
             if (user == null)
             {

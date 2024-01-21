@@ -12,6 +12,6 @@
     public class UserResponseDto:UserRequestDto
     {
         public List<string> Rools { get; set; } = new List<string>();
-        public int UserID { get; set; }
+        public string Id { get; set; }
     }
 }
