@@ -42,7 +42,7 @@ namespace OnlineTravelDiscussionForum.Services
             {
                 startDate = bandUser.startDate,
                 endDate = bandUser.endDate,
-                Status = bandUser.Status,
+                Status = BandStatus.Active,
                 UserID = user.Id,
 
             };
@@ -59,8 +59,8 @@ namespace OnlineTravelDiscussionForum.Services
                 var result = await _context.BandUsers.AddAsync(newBanduser);
                 await _context.SaveChangesAsync();
 
-                var buser = await _context.BandUsers.FirstAsync(x => x.UserID == newBanduser.UserID);
-                return _mapper.Map<bandUserResponceDto>(buser);
+                //var buser = await _context.BandUsers.FirstAsync(x => x.UserID == newBanduser.UserID);
+                return _mapper.Map<bandUserResponceDto>(result.Entity);
             }
             catch (Exception)
             {
@@ -72,10 +72,12 @@ namespace OnlineTravelDiscussionForum.Services
 
         public async Task<bandUserResponceDto> ChangeBandStatus(ChangeBandStatusDto banUser)
         {
-            var user = await _context.BandUsers.Include(x => x.user).FirstOrDefaultAsync(x => x.Id == banUser.banId);
+            var user = await _context.BandUsers.Include(x => x.user).Where(x => x.UserID == banUser.userId && x.Status == BandStatus.Active).FirstOrDefaultAsync();
+            
+            
             if (user == null)
             {
-                throw new Exception("user not found");
+                throw new Exception($"user is already {BandStatus.Inactive}");
             }
 
             user.Status = BandStatus.Inactive;

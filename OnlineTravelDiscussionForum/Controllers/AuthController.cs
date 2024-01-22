@@ -124,7 +124,7 @@ namespace OnlineTravelDiscussionForum.Controllers
 
         [HttpPost]
         [Route("get-user-rols")]
-        [Authorize(Roles = $"{StaticRoles.ADMIN},{StaticRoles.MODERATOR}")]
+        [Authorize(Roles = $"{StaticRoles.ADMIN}")]
 
         public async Task<IActionResult> GetUserRols()
         {

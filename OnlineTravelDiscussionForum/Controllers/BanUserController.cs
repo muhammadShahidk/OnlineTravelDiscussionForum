@@ -12,6 +12,7 @@ namespace OnlineTravelDiscussionForum.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+        [Authorize(Roles = $"{StaticRoles.MODERATOR}")]
     public class BanUserController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -29,7 +30,6 @@ namespace OnlineTravelDiscussionForum.Controllers
 
         //get all bened users
         [HttpGet]
-        //[Authorize(Roles = $"{StaticRoles.MODERATOR}")]
         public async Task<IActionResult> GetBannedUsers()
         {
             var userBanned = await _userService.GetAllBannedUsers();

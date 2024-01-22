@@ -74,7 +74,7 @@ namespace OnlineTravelDiscussionForum.Controllers
       
         //Delete post
         [HttpDelete("{id}")]
-        [Authorize(Roles = $"{StaticRoles.ADMIN},{StaticRoles.MODERATOR}")]
+        [Authorize(Roles = $"{StaticRoles.MODERATOR}")]
         public async Task<IActionResult> DeletePost(int id)
         {
             var post = await _context.Posts.FindAsync(id);

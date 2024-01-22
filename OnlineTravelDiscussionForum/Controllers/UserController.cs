@@ -67,7 +67,7 @@ namespace OnlineTravelDiscussionForum.Controllers
 
         //get all users 
         [HttpGet("all")]
-        [Authorize(Roles = $"{StaticRoles.ADMIN},{StaticRoles.MODERATOR}")]
+        [Authorize(Roles = $"{StaticRoles.MODERATOR}")]
         public async Task<ActionResult<UserResponseDto>> GetAllUsers()
         {
             var users = await _userManager.Users.ToListAsync();
@@ -96,7 +96,7 @@ namespace OnlineTravelDiscussionForum.Controllers
         //approval requests handling
 
         [HttpPost("approval-request")]
-        //[Authorize(Roles = StaticRoles.USER)]
+        [Authorize(Roles = $"{StaticRoles.ADMIN}")]
 
         public async Task<ActionResult<ApprovalResponseDto>> ApprovalRequest([FromBody] ARequestDto username)
         {
@@ -152,7 +152,7 @@ namespace OnlineTravelDiscussionForum.Controllers
 
 
         [HttpPut("approval-request")]
-        [Authorize(Roles = $"{StaticRoles.ADMIN},{StaticRoles.MODERATOR}")]
+        [Authorize(Roles = $"{StaticRoles.ADMIN}")]
 
         public async Task<ActionResult<ApprovalResponseDto>> ApprovalRequest(ApprovalRequestDto approvalRequest)
         {
@@ -192,7 +192,7 @@ namespace OnlineTravelDiscussionForum.Controllers
         }
 
         [HttpGet("approval-request")]
-        [Authorize(Roles = $"{StaticRoles.ADMIN},{StaticRoles.MODERATOR}")]
+        [Authorize(Roles = $"{StaticRoles.ADMIN}")]
 
         public async Task<ActionResult<ApprovalResponseDto>> GetAllAprovalRequests()
         {
@@ -213,7 +213,7 @@ namespace OnlineTravelDiscussionForum.Controllers
         //sensitive keywords handling
 
         [HttpGet("sensitivekeyword")]
-        [Authorize(Roles = $"{StaticRoles.ADMIN},{StaticRoles.MODERATOR}")]
+        [Authorize(Roles = $"{StaticRoles.ADMIN}")]
 
         public async Task<ActionResult<List<SensitiveKeywordResponseDto>>> GetAllSensitiveKeywords()
         {
@@ -227,7 +227,7 @@ namespace OnlineTravelDiscussionForum.Controllers
 
         [HttpPost("sensitivekeyword")]
         //[Authorize(Roles = StaticRoles.USER)]
-        [Authorize(Roles = $"{StaticRoles.ADMIN},{StaticRoles.MODERATOR}")]
+        [Authorize(Roles = $"{StaticRoles.ADMIN}")]
 
         public async Task<ActionResult<SensitiveKeywordResponseDto>> AddSensitiveKeyword(SensitiveKeywordRequestDto sensitiveKeywordDto)
         {

@@ -61,7 +61,7 @@ namespace OnlineTravelDiscussionForum.Controllers
         //user profile handling
 
         [HttpPut("password")]
-        [Authorize(Roles = $"{StaticRoles.USER},{StaticRoles.ADMIN}")]
+        [Authorize(Roles = $"{StaticRoles.USER},{StaticRoles.ADMIN},{StaticRoles.MODERATOR}")]
         public async Task<ActionResult> ChangePassword(ChangePasswordDto changePasswordDto)
         {
             var LogedinUser = await _userService.GetCurrentUser();

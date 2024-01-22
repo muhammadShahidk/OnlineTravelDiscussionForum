@@ -23,13 +23,13 @@ namespace OnlineTravelDiscussionForum.Dtos
         public string userId { get; set; } = string.Empty;
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
-        public BandStatus Status { get; set; }
+        //public BandStatus Status { get; set; }
     }
 
     public class ChangeBandStatusDto
     {
-        public int banId { get; set; } 
-        public BandStatus Status { get; set; }
+        public string userId { get; set; } 
+        //public BandStatus Status { get; set; }
     }
 
 
