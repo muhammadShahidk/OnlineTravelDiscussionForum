@@ -1,0 +1,8 @@
+{
+    "webAppService": {
+        "ResourceGroup": "OnlineDiscusstionForumDev",
+        "instanceName": "OnlineDiscusstionForumDevWeb001",
+        "location": "South Inida",
+        "pricing plan": "OnlineDiscusstionForumDev"
+    }
+}

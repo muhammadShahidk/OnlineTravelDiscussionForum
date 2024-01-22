@@ -1,0 +1,8 @@
+  "ConnectionStrings": {
+    //"DiscussionFormDb": "Data Source=DESKTOP-PLK2S58;Initial Catalog=DiscussionFormDb;Integrated Security=True;TrustServerCertificate=True",
+
+    "DiscussionFormDb": "Data Source =.\\SQLEXPRESS;Initial Catalog=DiscussionFormdb;Integrated Security=True;TrustServerCertificate=True"
+    //"Server=.\\SQLEXPRESS;Database=SmartPocket;Integrated" "Security=True;",
+    //"TrustServerCertificate=True\"/>"
+
+  },

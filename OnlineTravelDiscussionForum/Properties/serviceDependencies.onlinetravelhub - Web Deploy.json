@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "apis2": {
+      "ignored": "true",
+      "type": "apis.azure"
+    },
+    "mssql1": {
+      "serviceConnectorResourceId": "",
+      "secretStore": "AzureAppSettings",
+      "type": "mssql.onprem",
+      "connectionId": "ConnectionStrings:DiscussionFormDb",
+      "dynamicId": null
+    },
+    "identityapp1": {
+      "connectionInfo": "App registration: shahid, Tenant: Default Directory (muhammadshahdi22gmail.onmicrosoft.com - Microsoft Entra ID)",
+      "type": "identityapp.default"
+    }
+  }
+}

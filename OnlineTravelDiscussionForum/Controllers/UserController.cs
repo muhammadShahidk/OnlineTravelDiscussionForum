@@ -51,8 +51,8 @@ namespace OnlineTravelDiscussionForum.Controllers
                 return BadRequest("user not found");
             }
             var userResponse = _mapper.Map<UserResponseDto>(user);
-            var rolls =await _userManager.GetRolesAsync(user);
-            if(rolls == null)
+            var rolls = await _userManager.GetRolesAsync(user);
+            if (rolls == null)
             {
                 return BadRequest("no rools");
 
@@ -60,14 +60,14 @@ namespace OnlineTravelDiscussionForum.Controllers
 
             userResponse.Rools.AddRange(rolls);
 
-           return Ok(userResponse);
+            return Ok(userResponse);
 
         }
 
 
         //get all users 
         [HttpGet("all")]
-        [Authorize(Roles = $"{StaticRoles.ADMIN}")]
+        [Authorize(Roles = $"{StaticRoles.MODERATOR}")]
         public async Task<ActionResult<UserResponseDto>> GetAllUsers()
         {
             var users = await _userManager.Users.ToListAsync();
@@ -96,7 +96,7 @@ namespace OnlineTravelDiscussionForum.Controllers
         //approval requests handling
 
         [HttpPost("approval-request")]
-        //[Authorize(Roles = StaticRoles.USER)]
+        [Authorize(Roles = $"{StaticRoles.ADMIN}")]
 
         public async Task<ActionResult<ApprovalResponseDto>> ApprovalRequest([FromBody] ARequestDto username)
         {
@@ -106,12 +106,12 @@ namespace OnlineTravelDiscussionForum.Controllers
 
                 //var LogedinUserID = await _userService.GetCurrentUserId();
                 var user = await _userManager.FindByNameAsync(username.username);
-               
+
                 if (user == null)
                 {
                     return BadRequest("please provide Correct username");
                 }
-                
+
                 //var user =  await _userManager.FindByIdAsync(LogedinUserID);
                 //if (user == null)
                 //{
@@ -152,7 +152,7 @@ namespace OnlineTravelDiscussionForum.Controllers
 
 
         [HttpPut("approval-request")]
-        [Authorize(Roles = $"{StaticRoles.ADMIN},{StaticRoles.MODERATOR}")]
+        [Authorize(Roles = $"{StaticRoles.ADMIN}")]
 
         public async Task<ActionResult<ApprovalResponseDto>> ApprovalRequest(ApprovalRequestDto approvalRequest)
         {
@@ -167,7 +167,7 @@ namespace OnlineTravelDiscussionForum.Controllers
                 return BadRequest("user not found");
             }
             //aprove request
-            var approvalRequestObj = _context.ApprovalRequests.Include(x=>x.User).FirstOrDefault(request => request.RequestId == approvalRequest.RequestId);
+            var approvalRequestObj = _context.ApprovalRequests.Include(x => x.User).FirstOrDefault(request => request.RequestId == approvalRequest.RequestId);
             if (approvalRequestObj == null)
             {
                 return BadRequest("request not found");
@@ -192,11 +192,11 @@ namespace OnlineTravelDiscussionForum.Controllers
         }
 
         [HttpGet("approval-request")]
-        [Authorize(Roles = $"{StaticRoles.ADMIN},{StaticRoles.MODERATOR}")]
+        [Authorize(Roles = $"{StaticRoles.ADMIN}")]
 
         public async Task<ActionResult<ApprovalResponseDto>> GetAllAprovalRequests()
         {
-            var AllRequests = await _context.ApprovalRequests.Include(x=>x.User).ToListAsync();
+            var AllRequests = await _context.ApprovalRequests.Include(x => x.User).ToListAsync();
             var approvalStatus = ApprovalStatus.Pending.ToString();
             if (AllRequests == null)
             {
@@ -213,7 +213,7 @@ namespace OnlineTravelDiscussionForum.Controllers
         //sensitive keywords handling
 
         [HttpGet("sensitivekeyword")]
-        [Authorize(Roles = $"{StaticRoles.ADMIN},{StaticRoles.MODERATOR}")]
+        [Authorize(Roles = $"{StaticRoles.ADMIN}")]
 
         public async Task<ActionResult<List<SensitiveKeywordResponseDto>>> GetAllSensitiveKeywords()
         {
@@ -227,7 +227,7 @@ namespace OnlineTravelDiscussionForum.Controllers
 
         [HttpPost("sensitivekeyword")]
         //[Authorize(Roles = StaticRoles.USER)]
-        [Authorize(Roles = $"{StaticRoles.ADMIN},{StaticRoles.MODERATOR}")]
+        [Authorize(Roles = $"{StaticRoles.ADMIN}")]
 
         public async Task<ActionResult<SensitiveKeywordResponseDto>> AddSensitiveKeyword(SensitiveKeywordRequestDto sensitiveKeywordDto)
         {
@@ -286,7 +286,7 @@ namespace OnlineTravelDiscussionForum.Controllers
             await _context.SaveChangesAsync();
             return Ok("keyword updated");
         }
-        
+
 
 
         //user posts handling 
@@ -301,7 +301,7 @@ namespace OnlineTravelDiscussionForum.Controllers
             {
                 return BadRequest("first login to see posts");
             }
-            var posts = await _context.Posts.Where(x => x.UserID == userid).Include(c=>c.user).ToListAsync();
+            var posts = await _context.Posts.Where(x => x.UserID == userid).Include(c => c.user).ToListAsync();
             //PostResponseDto[] postsResponse = posts.Select(x=>new PostResponseDto {Id = x.PostID, Title = x.Title , Content = x.Content }).ToArray();
 
             return _mapper.Map<List<PostResponseDto>>(posts); ;
@@ -332,11 +332,11 @@ namespace OnlineTravelDiscussionForum.Controllers
             var sensitiveKeywords = await _context.SensitiveKeywords.ToListAsync();
 
             //filtering the sensitive words from the post
-            if(post.Title != null)
+            if (post.Title != null)
             {
                 post.Title = _userService.FilterSensitiveWords(post.Title, sensitiveKeywords);
             }
-            if(post.Content != null)
+            if (post.Content != null)
             {
                 post.Content = _userService.FilterSensitiveWords(post.Content, sensitiveKeywords);
             }
@@ -356,7 +356,7 @@ namespace OnlineTravelDiscussionForum.Controllers
             {
                 //send server internal error
                 return StatusCode(500);
-                
+
             }
 
             return Ok("post updated");
@@ -377,6 +377,14 @@ namespace OnlineTravelDiscussionForum.Controllers
 
             if (userId != null)
             {
+                //check if the user is banned
+                bool status = await _userService.isUserBand(userId);
+
+                if (status)
+                {
+                    return BadRequest("you are banned");
+                }
+
                 //filtering sensitive words from the post
                 var sensitiveWords = await _context.SensitiveKeywords.ToListAsync();
                 post.Content = _userService.FilterSensitiveWords(post.Content, sensitiveWords);
@@ -384,10 +392,10 @@ namespace OnlineTravelDiscussionForum.Controllers
 
 
                 _context.Posts.Add(new Post { Title = post.Title, Content = post.Content, UserID = userId });
+                await _context.SaveChangesAsync();
 
             }
 
-            await _context.SaveChangesAsync();
 
             return Ok("post added: -> " + post.Title);
         }
@@ -417,7 +425,7 @@ namespace OnlineTravelDiscussionForum.Controllers
         }
 
 
-        
+
         //user comments handling
 
         [Authorize(Roles = StaticRoles.USER)]
@@ -431,6 +439,14 @@ namespace OnlineTravelDiscussionForum.Controllers
             {
                 return BadRequest("first login to see posts");
             }
+
+            //check if the user is banned
+            bool status = await _userService.isUserBand(userid);
+            if (status)
+            {
+                return BadRequest("you are banned");
+            }
+
             var post = await _context.Posts.FirstOrDefaultAsync(x => x.PostID == id);
             if (post == null)
             {
@@ -450,12 +466,12 @@ namespace OnlineTravelDiscussionForum.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok(new { message= "comment added" ,comment = comment.Content});
-           
+            return Ok(new { message = "comment added", comment = comment.Content });
+
         }
 
 
-       
+
         [Authorize(Roles = StaticRoles.USER)]
         [HttpGet("posts/{id}/comments")]
         public async Task<IActionResult> GetComments(int id)
@@ -503,7 +519,7 @@ namespace OnlineTravelDiscussionForum.Controllers
 
 
         [Authorize(Roles = StaticRoles.USER)]
-        [HttpPut("comments/{id}")] 
+        [HttpPut("comments/{id}")]
         public async Task<IActionResult> PutComment(int id, CommentRequestDto comment)
         {
             var userId = await _userService.GetCurrentUserId();
@@ -561,8 +577,8 @@ namespace OnlineTravelDiscussionForum.Controllers
                     return BadRequest("Please log in to view comments");
                 }
 
-               //get current user all comments
-               var comments = await _context.Comments.Where(x => x.UserID == userId).ToListAsync();
+                //get current user all comments
+                var comments = await _context.Comments.Where(x => x.UserID == userId).ToListAsync();
 
 
                 if (comments == null)
