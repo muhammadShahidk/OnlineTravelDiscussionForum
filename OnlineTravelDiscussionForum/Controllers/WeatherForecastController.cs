@@ -26,7 +26,6 @@ namespace OnlineTravelDiscussionForum.Controllers
 
         [HttpGet]
         [Route("GetUserRole")]
-        [Authorize(Roles = StaticRoles.USER)]
         public IActionResult GetUserRole()
         {
             return Ok(Summaries);
@@ -34,7 +33,6 @@ namespace OnlineTravelDiscussionForum.Controllers
 
         [HttpGet]
         [Route("GetAdminRole")]
-        [Authorize(Roles = StaticRoles.ADMIN)]
         public IActionResult GetAdminRole()
         {
             return Ok(Summaries);
@@ -42,7 +40,6 @@ namespace OnlineTravelDiscussionForum.Controllers
 
         [HttpGet]
         [Route("GetModeratorRole")]
-        [Authorize(Roles = StaticRoles.MODERATOR)]
         public IActionResult GetOwnerRole()
         {
             return Ok(Summaries);
