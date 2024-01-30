@@ -96,7 +96,6 @@ namespace OnlineTravelDiscussionForum.Controllers
         //approval requests handling
 
         [HttpPost("approval-request")]
-        [Authorize(Roles = $"{StaticRoles.ADMIN}")]
 
         public async Task<ActionResult<ApprovalResponseDto>> ApprovalRequest([FromBody] ARequestDto username)
         {
