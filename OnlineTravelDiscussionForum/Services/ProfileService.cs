@@ -60,7 +60,13 @@ namespace OnlineTravelDiscussionForum.Services
 
         private static string GenrateBody(ApplicationUser user, string resetLink)
         {
-            var templatePath = "C:\\Users\\HP\\Source\\Repos\\muhammadShahidk\\OnlineTravelDiscussionForum\\OnlineTravelDiscussionForum\\Email\\EmailTemplate.html";
+            //var templatePath = "C:\\Users\\HP\\Source\\Repos\\muhammadShahidk\\OnlineTravelDiscussionForum\\OnlineTravelDiscussionForum\\Email\\EmailTemplate.html";
+            var projectDirectory = Directory.GetCurrentDirectory();
+            var templatePath = Path.Combine(projectDirectory, "Email", "EmailTemplate.html");
+
+
+
+
             var template = File.ReadAllText(templatePath);
 
             // Calculate expiration time (adjust as needed)

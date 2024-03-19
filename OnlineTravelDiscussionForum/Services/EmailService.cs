@@ -19,7 +19,7 @@ namespace OnlineTravelDiscussionForum.Services
 
 
 
-        public void SendEmail(EmailDto request)
+        public bool SendEmail(EmailDto request)
         {
             var smtpSettings = _config.GetSection("SmtpSettings").Get<SmtpSettingsDto>(); 
             
@@ -35,10 +35,21 @@ namespace OnlineTravelDiscussionForum.Services
             // Send email
             using (var client = new SmtpClient())
             {
-                client.Connect(smtpSettings.Host, smtpSettings.Port, false);
-                client.Authenticate(smtpSettings.Username, smtpSettings.Password);
-                client.Send(email);
-                client.Disconnect(true);
+                try
+                {
+                    client.Connect(smtpSettings.Host, smtpSettings.Port, false);
+                    client.Authenticate(smtpSettings.Username, smtpSettings.Password);
+                    client.Send(email);
+                    client.Disconnect(true);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+
+
+                    throw new Exception("Error :" + ex.Message);
+                }
+              
             }
 
         }

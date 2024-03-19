@@ -1,4 +1,5 @@
 ﻿using MailKit;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using OnlineTravelDiscussionForum.Dtos;
 using OnlineTravelDiscussionForum.Interfaces;
@@ -21,8 +22,18 @@ namespace OnlineTravelDiscussionForum.Controllers
         [HttpPost]
         public IActionResult SendEmail(EmailDto request)
         {
-            _emailService.SendEmail(request);
-            return Ok();
+            try
+            {
+                var isSent = _emailService.SendEmail(request);
+                return Ok("mail Sent");
+
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+        
         }
     }
 }

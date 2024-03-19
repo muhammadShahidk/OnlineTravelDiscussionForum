@@ -12,10 +12,12 @@ namespace OnlineTravelDiscussionForum.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IAuthService authService, ILogger<AuthController> logger)
         {
             _authService = authService;
+            _logger = logger;
         }
 
         // Route For Seeding my roles to DB
@@ -23,6 +25,7 @@ namespace OnlineTravelDiscussionForum.Controllers
         [Route("seed-roles")]
         public async Task<IActionResult> SeedRoles()
         {
+            
             var seerRoles = await _authService.SeedRolesAsync();
 
             return Ok(seerRoles);
@@ -34,6 +37,7 @@ namespace OnlineTravelDiscussionForum.Controllers
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
+
             var registerResult = await _authService.RegisterAsync(registerDto);
 
             if (registerResult.IsSucceed)

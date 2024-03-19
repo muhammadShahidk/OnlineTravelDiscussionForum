@@ -4,6 +4,6 @@ namespace OnlineTravelDiscussionForum.Interfaces
 {
     public interface IEMailService
     {
-        void SendEmail(EmailDto request);
+        bool SendEmail(EmailDto request);
     }
 }

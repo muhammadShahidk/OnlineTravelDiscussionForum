@@ -19,6 +19,7 @@ namespace OnlineTravelDiscussionForum.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany(p => p.Posts)
                 .WithOne(u => u.user)
