@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineTravelDiscussionForum.Data;
 
@@ -11,9 +12,11 @@ using OnlineTravelDiscussionForum.Data;
 namespace OnlineTravelDiscussionForum.Migrations
 {
     [DbContext(typeof(ForumDbContext))]
-    partial class ForumDataContextModelSnapshot : ModelSnapshot
+    [Migration("20240320060358_ReplyeesAdded")]
+    partial class ReplyeesAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -380,7 +383,7 @@ namespace OnlineTravelDiscussionForum.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Replies");
+                    b.ToTable("Reply");
                 });
 
             modelBuilder.Entity("OnlineTravelDiscussionForum.Modals.SensitiveKeyword", b =>
@@ -524,9 +527,9 @@ namespace OnlineTravelDiscussionForum.Migrations
                         .IsRequired();
 
                     b.HasOne("OnlineTravelDiscussionForum.Modals.ApplicationUser", "User")
-                        .WithMany("Replies")
+                        .WithMany()
                         .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Comment");
@@ -554,8 +557,6 @@ namespace OnlineTravelDiscussionForum.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("Posts");
-
-                    b.Navigation("Replies");
 
                     b.Navigation("SensitiveKeywords");
                 });

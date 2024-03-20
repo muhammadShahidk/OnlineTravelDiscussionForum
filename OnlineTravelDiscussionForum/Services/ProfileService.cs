@@ -64,10 +64,18 @@ namespace OnlineTravelDiscussionForum.Services
             var projectDirectory = Directory.GetCurrentDirectory();
             var templatePath = Path.Combine(projectDirectory, "Email", "EmailTemplate.html");
 
+            string template = "";
+            try
+            {
 
+                template = File.ReadAllText(templatePath);
+            }
+            catch (Exception ex)
+            {
 
+                throw new Exception(ex.Message);
+            }
 
-            var template = File.ReadAllText(templatePath);
 
             // Calculate expiration time (adjust as needed)
             var expirationTimeUtc = DateTime.UtcNow.AddHours(1);
@@ -84,7 +92,7 @@ namespace OnlineTravelDiscussionForum.Services
             template = template.Replace("[ResetLink]", resetLink);
             template = template.Replace("[ExpirationTime]", FormatDateTime(expirationTimeLocal, "ur-PK"));
             template = template.Replace("[RemainingMinutes]", remainingMinutes.ToString());
-           
+
 
             // Use the template in the email body
             // Use the template in the email body

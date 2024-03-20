@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using OnlineTravelDiscussionForum.Data;
 using OnlineTravelDiscussionForum.Dtos;
 using OnlineTravelDiscussionForum.Interfaces;
+using OnlineTravelDiscussionForum.Migrations;
 using OnlineTravelDiscussionForum.Modals;
 using OnlineTravelDiscussionForum.OtherObjects;
 using System.Security.Claims;
@@ -86,7 +87,7 @@ namespace OnlineTravelDiscussionForum.Controllers
         [HttpPost("forgot-password")]
         public async Task<ActionResult> ForgotPasswordToken(forgotPasswordDto forgotPassword)
         {
-//dummy token generation if we do not have email in production
+            //dummy token generation if we do not have email in production
             if (forgotPassword.Username != null)
             {
                 var _user = await _userManager.FindByNameAsync(forgotPassword.Username);
@@ -99,7 +100,7 @@ namespace OnlineTravelDiscussionForum.Controllers
                 return Ok(new { userid = _user.Id, token = _token });
             }
 
-//actual token generation if we have email in production
+            //actual token generation if we have email in production
             var user = await _userManager.FindByEmailAsync(forgotPassword.Email);
             if (user == null)
             {
@@ -108,17 +109,27 @@ namespace OnlineTravelDiscussionForum.Controllers
             //var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
             //var link = Url.Action("ResetPassword", "Profile", new { userId = user.Id, token }, Request.Scheme);
-            
-            var result = await _ProfileService.SendForgotPasswordEmail(user);
-            if (!result)
+
+            try
             {
-                return BadRequest("email is not registred ");
+                var result = await _ProfileService.SendForgotPasswordEmail(user);
+                if (!result)
+                {
+                    return BadRequest("email is not registred ");
+                }
+
+                return Ok("email is sent to your email ");
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
             }
 
-            return Ok("email is sent to your email ");
+
         }
 
-        
+
         [HttpPut("forgot-password")]
         public async Task<ActionResult> ForgotPassword(ResetPasswordDto resetPasswordDto)
         {

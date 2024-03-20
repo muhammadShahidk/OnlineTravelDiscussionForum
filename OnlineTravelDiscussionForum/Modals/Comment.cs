@@ -18,11 +18,15 @@ namespace OnlineTravelDiscussionForum.Modals
         public string UserID { get; set; }
 
         public ApplicationUser User { get; set; }
-        
+
         public int PostID { get; set; }
 
         public Post Post { get; set; }
+
+        // Navigation property for replies
+        public ICollection<Reply> Replies { get; set; } = new List<Reply>();
+
     }
 
-    
+
 }

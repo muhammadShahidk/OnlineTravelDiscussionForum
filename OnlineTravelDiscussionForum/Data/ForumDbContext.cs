@@ -7,13 +7,14 @@ namespace OnlineTravelDiscussionForum.Data
 {
     public class ForumDbContext : IdentityDbContext<ApplicationUser>
     {
-        public ForumDbContext(DbContextOptions<ForumDbContext> options) : base(options) {   }
+        public ForumDbContext(DbContextOptions<ForumDbContext> options) : base(options) { }
 
         public DbSet<Post> Posts { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<ApprovalRequest> ApprovalRequests { get; set; }
         public DbSet<SensitiveKeyword> SensitiveKeywords { get; set; }
         public DbSet<BandUser> BandUsers { get; set; }
+        public DbSet<Reply> Replies { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -29,6 +30,11 @@ namespace OnlineTravelDiscussionForum.Data
                .HasMany(c => c.Comments)
                .WithOne(p => p.User)
                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<ApplicationUser>()
+         .HasMany(c => c.Replies)
+         .WithOne(p => p.User)
+         .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<ApplicationUser>()
              .HasMany(c => c.ApprovalRequests)
@@ -49,6 +55,11 @@ namespace OnlineTravelDiscussionForum.Data
                 .HasMany(c => c.Comments)
                 .WithOne(p => p.Post)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            //modelBuilder.Entity<Post>()
+            //  .HasMany(c => c.Comments)
+            //  .WithOne(p => p.Post)
+            //  .OnDelete(DeleteBehavior.Cascade);
 
 
         }

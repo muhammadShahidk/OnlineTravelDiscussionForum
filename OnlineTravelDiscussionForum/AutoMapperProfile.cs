@@ -48,7 +48,7 @@ namespace OnlineTravelDiscussionForum
 
             CreateMap<bandUserResponceDto, BandUser>();
 
-            CreateMap<bandUserRequestDto,BandUser>().ReverseMap();
+            CreateMap<bandUserRequestDto, BandUser>().ReverseMap();
 
             //CreateMap<ApplicationUser, BandUsersStatusResponceDto>()
             //    .ForMember(dest =>dest.Status , opt=>opt.MapFrom(src =>{
@@ -58,6 +58,10 @@ namespace OnlineTravelDiscussionForum
             //                //return status;
             //            }));
             CreateMap<ChangeBandStatusDto, BandUser>();
+
+
+            CreateMap<Reply, ReplyRequestDto>().ReverseMap();
+            CreateMap<Reply, ReplyResponseDto>().ReverseMap();
 
 
         }
