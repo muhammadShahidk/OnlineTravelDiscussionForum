@@ -76,7 +76,7 @@ namespace OnlineTravelDiscussionForum.Services
                 throw new ArgumentException($"Comment with ID {commentId} does not exist.");
             }
 
-            var replies = await _forumDbContext.Replies
+            var replies = await _forumDbContext.Replies.Include(x => x.User)
                 .Where(r => r.CommentId == commentId)
                 .ToListAsync();
 

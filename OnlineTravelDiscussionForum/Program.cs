@@ -13,6 +13,7 @@ using OnlineTravelDiscussionForum.Services;
 using System.Text;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Identity.Web;
+using OnlineTravelDiscussionForum.SignalRHub;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,7 @@ var builder = WebApplication.CreateBuilder(args);
 //auth 
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
 builder.Services.AddDbContext<ForumDbContext>(options =>
 {
 
@@ -51,7 +53,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireUppercase = false;
     options.Password.RequireNonAlphanumeric = false;
     options.SignIn.RequireConfirmedEmail = false;
-//setup email configuration email correction
+    //setup email configuration email correction
     options.User.RequireUniqueEmail = true;
     //options.Tokens.
 });
@@ -80,7 +82,7 @@ builder.Services
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
         };
     });
-    //.AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+//.AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
 
 //builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
 
@@ -90,17 +92,34 @@ builder.Services.AddControllers();
 //    options.AddDefaultPolicy(builder =>
 //    {
 //        builder
-//            .WithOrigins("http://localhost:4200", "http://192.168.10.21:8081", "http://localhost:8081")
-//            //.AllowAnyOrigin()
-//            .AllowAnyMethod()
-//            .AllowAnyHeader();
+//           .WithOrigins("http://localhost:4200")
+//           .AllowAnyMethod()
+//           .AllowAnyHeader()
+//           .AllowCredentials(); // Allow credentials if needed
 //    });
 //});
+
+
+builder.Services.AddSignalR();
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+    options.AddPolicy("CorsPolicy", builder =>
+        builder.WithOrigins("http://localhost:4200")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials());
 });
+
+
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowAll",
+//      builder =>
+//        builder.WithOrigins("http://localhost:4200")
+//            .AllowAnyMethod()
+//            .AllowAnyHeader()
+//            .AllowCredentials());
+//});
 
 //app.UseCors("AllowAll");
 
@@ -130,9 +149,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseMiddleware<ApiResponseMiddleware>();
-app.UseCors("AllowAll");
+app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHub<ChatHub>("/chat");
 
 app.Run();

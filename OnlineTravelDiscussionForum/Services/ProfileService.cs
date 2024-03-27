@@ -14,11 +14,14 @@ namespace OnlineTravelDiscussionForum.Services
     public class ProfileService : IProfileService
     {
         private readonly IEMailService _emailService;
+        private readonly IConfiguration configuration;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public ProfileService(IEMailService emailService, UserManager<ApplicationUser> userManager)
+
+        public ProfileService(IEMailService emailService, IConfiguration configuration,UserManager<ApplicationUser> userManager)
         {
             _emailService = emailService;
+            this.configuration = configuration;
             _userManager = userManager;
         }
         public Task<bool> ResetPassword(ResetPasswordDto resetPasswordDto)
@@ -36,7 +39,10 @@ namespace OnlineTravelDiscussionForum.Services
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             string encodedToken = EncodeTokenForUrl(token);
 
-            var resetLink = $"http://localhost:4200/reset-password?userId={user.Id}&token={encodedToken}";
+            var settings = this.configuration.GetSection("AppSettings").Get<AppSettings>();
+
+
+            var resetLink = $"{settings.getBaseUrl()}/reset-password?userId={user.Id}&token={encodedToken}";
 
 
             var body = GenrateBody(user, resetLink);
