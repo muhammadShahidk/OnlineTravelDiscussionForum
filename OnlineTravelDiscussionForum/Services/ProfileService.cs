@@ -8,19 +8,21 @@ using System.Security.Policy;
 using Azure.Core;
 using System.Globalization;
 using System.Web;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace OnlineTravelDiscussionForum.Services
 {
     public class ProfileService : IProfileService
     {
         private readonly IEMailService _emailService;
+        private readonly IHostEnvironment _env;
         private readonly IConfiguration configuration;
         private readonly UserManager<ApplicationUser> _userManager;
 
-
-        public ProfileService(IEMailService emailService, IConfiguration configuration,UserManager<ApplicationUser> userManager)
+        public ProfileService(IEMailService emailService,IHostEnvironment env, IConfiguration configuration,UserManager<ApplicationUser> userManager)
         {
             _emailService = emailService;
+            this._env = env;
             this.configuration = configuration;
             _userManager = userManager;
         }
@@ -64,10 +66,15 @@ namespace OnlineTravelDiscussionForum.Services
             return HttpUtility.UrlEncode(token);
         }
 
-        private static string GenrateBody(ApplicationUser user, string resetLink)
+        private  string GenrateBody(ApplicationUser user, string resetLink)
         {
             //var templatePath = "C:\\Users\\HP\\Source\\Repos\\muhammadShahidk\\OnlineTravelDiscussionForum\\OnlineTravelDiscussionForum\\Email\\EmailTemplate.html";
             var projectDirectory = Directory.GetCurrentDirectory();
+            var wwwRootPath =  _env.ContentRootPath;
+
+            throw new NotImplementedException($"projectDirectory: {projectDirectory} wwwRootPath: {wwwRootPath}");
+
+
             var templatePath = Path.Combine(projectDirectory, "Email", "EmailTemplate.html");
 
             string template = "";
