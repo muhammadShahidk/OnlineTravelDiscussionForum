@@ -72,10 +72,10 @@ namespace OnlineTravelDiscussionForum.Services
             var projectDirectory = Directory.GetCurrentDirectory();
             var wwwRootPath =  _env.ContentRootPath;
 
-            throw new NotImplementedException($"projectDirectory: {projectDirectory} wwwRootPath: {wwwRootPath}");
+            //throw new NotImplementedException($"projectDirectory: {projectDirectory} wwwRootPath: {wwwRootPath}");
 
 
-            var templatePath = Path.Combine(projectDirectory, "Email", "EmailTemplate.html");
+            var templatePath = Path.Combine(wwwRootPath, "Email", "EmailTemplate.html");
 
             string template = "";
             try
