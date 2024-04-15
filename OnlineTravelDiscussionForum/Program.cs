@@ -104,7 +104,7 @@ builder.Services.AddSignalR();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", builder =>
-        builder.WithOrigins("http://localhost:4200")
+        builder.WithOrigins("http://localhost:4200", "https://muhammadshahidk.github.io/Forum")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());
