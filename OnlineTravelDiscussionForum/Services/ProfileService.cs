@@ -44,7 +44,7 @@ namespace OnlineTravelDiscussionForum.Services
             var settings = this.configuration.GetSection("AppSettings").Get<AppSettings>();
 
 
-            var resetLink = $"{settings.getBaseUrl()}/reset-password?userId={user.Id}&token={encodedToken}";
+            var resetLink = $"{settings.getBaseUrl()}/forgot-password?userId={user.Id}&token={encodedToken}";
 
 
             var body = GenrateBody(user, resetLink);
