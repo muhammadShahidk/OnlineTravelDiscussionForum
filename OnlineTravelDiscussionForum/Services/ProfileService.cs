@@ -70,12 +70,15 @@ namespace OnlineTravelDiscussionForum.Services
         {
             //var templatePath = "C:\\Users\\HP\\Source\\Repos\\muhammadShahidk\\OnlineTravelDiscussionForum\\OnlineTravelDiscussionForum\\Email\\EmailTemplate.html";
             var projectDirectory = Directory.GetCurrentDirectory();
-            var wwwRootPath =  _env.ContentRootPath;
+            //var wwwRootPath =  _env.ContentRootPath;
+            string wwwRootPath = _env.ContentRootFileProvider.GetFileInfo("wwwroot/Email/EmailTemplate.html")?.PhysicalPath;
+
 
             //throw new NotImplementedException($"projectDirectory: {projectDirectory} wwwRootPath: {wwwRootPath}");
 
 
-            var templatePath = Path.Combine(wwwRootPath, "Email", "EmailTemplate.html");
+            //var templatePath = Path.Combine(wwwRootPath, "Email", "EmailTemplate.html");
+            var templatePath = wwwRootPath;
 
             string template = "";
             try

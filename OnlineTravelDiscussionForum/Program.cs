@@ -110,7 +110,6 @@ builder.Services.AddCors(options =>
             .AllowCredentials());
 });
 
-
 //builder.Services.AddCors(options =>
 //{
 //    options.AddPolicy("AllowAll",
@@ -146,10 +145,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseCors("CorsPolicy");
 app.UseHttpsRedirection();
 app.UseMiddleware<ApiResponseMiddleware>();
-app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
