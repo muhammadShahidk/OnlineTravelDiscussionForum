@@ -104,11 +104,12 @@ builder.Services.AddSignalR();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", builder =>
-        builder.WithOrigins("http://localhost:4200", "https://muhammadshahidk.github.io/Forum")
+        builder.WithOrigins("http://localhost:4200", "https://muhammadshahidk.github.io")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());
 });
+
 
 //builder.Services.AddCors(options =>
 //{
